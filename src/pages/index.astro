@@ -1,8 +1,26 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Fitness Tracker - Strona główna">
+  <h1 class="text-4xl font-bold text-center mb-8">Strona główna</h1>
+  <div class="text-center">
+    <p class="text-lg text-muted-foreground mb-6">
+      Witaj w aplikacji Fitness Tracker! Śledź swoje treningi i osiągaj cele.
+    </p>
+    <div class="flex gap-4 justify-center">
+      <a
+        href="/dashboard"
+        class="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
+      >
+        Przejdź do Dashboard
+      </a>
+      <a
+        href="/workouts"
+        class="border border-border bg-background px-6 py-3 rounded-lg hover:bg-accent transition-colors"
+      >
+        Zobacz treningi
+      </a>
+    </div>
+  </div>
 </Layout>

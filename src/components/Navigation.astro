@@ -1,0 +1,35 @@
+---
+// Czysto statyczny komponent Astro - bez React
+---
+
+<nav class="border-b bg-card">
+  <div class="container mx-auto px-4">
+    <div class="flex h-16 items-center justify-between">
+      <div class="flex items-center space-x-8">
+        <a href="/" class="text-xl font-bold text-primary"> 💪 Fitness Tracker </a>
+
+        <div class="hidden md:flex space-x-6">
+          <a href="/dashboard" class="text-sm font-medium hover:text-primary transition-colors"> Dashboard </a>
+          <a href="/workouts" class="text-sm font-medium hover:text-primary transition-colors"> Treningi </a>
+          <a href="/goals" class="text-sm font-medium hover:text-primary transition-colors"> Cele </a>
+          <a href="/progress" class="text-sm font-medium hover:text-primary transition-colors"> Postępy </a>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <a
+          href="/auth/login"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        >
+          Zaloguj
+        </a>
+        <a
+          href="/auth/register"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+        >
+          Zarejestruj
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
