@@ -1,47 +1,67 @@
-# AI Rules for {{project-name}}
+# AI Rules for Fitness Tracker
 
-{{project-description}}
+A modern fitness tracking application built with Astro, React, and TypeScript. Features workout tracking, goal setting, and progress monitoring with a server-side rendered architecture.
 
 ## Tech Stack
 
-- Astro 5
-- TypeScript 5
-- React 19
-- Tailwind 4
-- Shadcn/ui
+- **Astro 5.13.7** - Server-side rendering framework with hybrid output mode
+- **React 19.1.1** - Interactive UI components 
+- **TypeScript 5** - Type safety
+- **Tailwind CSS 4.1.13** - Utility-first styling with CSS variables
+- **Shadcn/ui** - Component library (New York style, no RSC)
+- **Node.js adapter** - Standalone server mode
 
-## Project Structure
+## Project Architecture
 
-When introducing changes to the project, always follow the directory structure below:
+### Current Structure
+- `./src/layouts/` - Astro layouts (`Layout.astro` is the main template)
+- `./src/pages/` - File-based routing (dashboard, workouts, goals, progress, auth)
+- `./src/components/` - Mixed Astro (static) and React (interactive) components
+- `./src/components/ui/` - Shadcn/ui components (configured for non-RSC React)
+- `./src/types/` - Domain entities (User, Goal, Workout) with barrel exports
+- `./src/lib/` - Utilities (`utils.ts` for cn() helper)
+- `./src/styles/global.css` - Tailwind 4 with CSS variables and dark mode
+- `./public/` - Static assets
 
-- `./src` - source code
-- `./src/layouts` - Astro layouts
-- `./src/pages` - Astro pages
-- `./src/pages/api` - API endpoints
-- `./src/middleware/index.ts` - Astro middleware
-- `./src/db` - Supabase clients and types
-- `./src/types.ts` - Shared types for backend and frontend (Entities, DTOs)
-- `./src/components` - Client-side components written in Astro (static) and React (dynamic)
-- `./src/components/ui` - Client-side components from Shadcn/ui
-- `./src/lib` - Services and helpers
-- `./src/assets` - static internal assets
-- `./public` - public assets
+### Missing Infrastructure (Planned)
+- `./src/pages/api/` - API endpoints (not yet implemented)
+- `./src/middleware/index.ts` - Request/response middleware (not yet implemented) 
+- `./src/db/` - Database clients and Supabase integration (not yet implemented)
 
-When modifying the directory structure, always update this section.
+## Key Development Patterns
 
-## Coding practices
+### Component Strategy
+- **Static content**: Use `.astro` components (see `Navigation.astro`, `Welcome.astro`)
+- **Interactive features**: Use React `.tsx` components with `client:load` directive
+- **Layouts**: Single `Layout.astro` with optional navigation and dark mode by default
 
-### Guidelines for clean code
+### Styling Approach
+- **CSS Variables**: Custom properties for theming with light/dark variants
+- **Tailwind 4**: Uses `@import "tailwindcss"` and `@theme inline` blocks
+- **Path aliases**: `@/` points to `./src/` (configured in `tsconfig.json`)
+- **Design system**: Shadcn/ui configured for "new-york" style without RSC
 
-- Use feedback from linters to improve the code when making changes.
-- Prioritize error handling and edge cases.
-- Handle errors and edge cases at the beginning of functions.
-- Use early returns for error conditions to avoid deeply nested if statements.
-- Place the happy path last in the function for improved readability.
-- Avoid unnecessary else statements; use if-return pattern instead.
-- Use guard clauses to handle preconditions and invalid states early.
-- Implement proper error logging and user-friendly error messages.
-- Consider using custom error types or error factories for consistent error handling.
+## Development Workflow
+
+### Build & Scripts
+- `npm run dev` - Development server (port 3000)
+- `npm run build` - Production build with SSR
+- `npm run lint` - ESLint with React Compiler plugin
+- `npm run format` - Prettier formatting
+
+### Quality Tools
+- **ESLint 9**: Flat config with TypeScript, React, Astro, and a11y rules
+- **React Compiler**: Enabled as error-level rule for optimization
+- **Husky + lint-staged**: Pre-commit hooks for code quality
+- **TypeScript**: Strict mode with React JSX transform
+
+## Type System
+
+### Domain Models
+- Located in `src/types/` with individual files per entity
+- Barrel exports via `src/types/index.ts` for clean imports
+- Current entities: `User`, `Goal`, `Workout` (basic interfaces)
+- Polish language used in UI text, English for code/types
 
 ## Frontend
 
