@@ -1,0 +1,211 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { mockExerciseTemplates, getExerciseTemplatesByCategory } from "@/lib/mocks";
+
+// Grupowanie ćwiczeń po kategoriach
+const categories = [
+  { id: "strength", label: "Siłowe", icon: "💪" },
+  { id: "cardio", label: "Cardio", icon: "🏃" },
+  { id: "flexibility", label: "Rozciąganie", icon: "🧘" },
+  { id: "sports", label: "Sport", icon: "⚽" },
+  { id: "other", label: "Inne", icon: "🎯" },
+] as const;
+
+// Mapy trudności i sprzętu
+const difficultyLabels = {
+  beginner: { label: "Początkujący", class: "bg-green-500/10 text-green-500" },
+  intermediate: { label: "Średniozaawansowany", class: "bg-yellow-500/10 text-yellow-500" },
+  advanced: { label: "Zaawansowany", class: "bg-red-500/10 text-red-500" },
+};
+
+const muscleGroupLabels: Record<string, string> = {
+  chest: "Klatka",
+  back: "Plecy",
+  shoulders: "Barki",
+  biceps: "Biceps",
+  triceps: "Triceps",
+  legs: "Nogi",
+  glutes: "Pośladki",
+  core: "Core",
+  cardio: "Cardio",
+  "full-body": "Całe ciało",
+};
+---
+
+<Layout title="Katalog Ćwiczeń - Fitness Tracker">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold mb-2">Katalog Ćwiczeń</h1>
+    <p class="text-lg text-muted-foreground">
+      Przeglądaj dostępne ćwiczenia i dodaj je do swojego treningu
+    </p>
+  </div>
+
+  <!-- Nawigacja po kategoriach -->
+  <div class="flex flex-wrap gap-2 mb-8">
+    <button
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border bg-primary text-primary-foreground hover:bg-primary/90 transition-colors filter-btn active"
+      data-category="all"
+    >
+      <span>📋</span>
+      <span class="font-medium">Wszystkie</span>
+      <span class="text-xs bg-primary-foreground/20 text-primary-foreground px-2 py-0.5 rounded-full">
+        {mockExerciseTemplates.length}
+      </span>
+    </button>
+    {
+      categories.map((category) => {
+        const count = getExerciseTemplatesByCategory(category.id).length;
+        return (
+          <button
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border bg-card hover:bg-accent hover:text-accent-foreground transition-colors filter-btn"
+            data-category={category.id}
+          >
+            <span>{category.icon}</span>
+            <span class="font-medium">{category.label}</span>
+            <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{count}</span>
+          </button>
+        );
+      })
+    }
+  </div>
+
+  <!-- Grid z ćwiczeniami -->
+  {
+    categories.map((category) => {
+      const exercises = getExerciseTemplatesByCategory(category.id);
+      if (exercises.length === 0) return null;
+
+      return (
+        <section class="exercise-section mb-12" data-category={category.id}>
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span>{category.icon}</span>
+            <span>{category.label}</span>
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {exercises.map((exercise) => (
+              <article class="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden" data-category={category.id}>
+                {/* Header karty */}
+                <div class="p-4 border-b bg-muted/30">
+                  <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
+                    {exercise.name}
+                  </h3>
+                  {exercise.description && (
+                    <p class="text-sm text-muted-foreground mt-1">{exercise.description}</p>
+                  )}
+                </div>
+
+                {/* Ciało karty */}
+                <div class="p-4 space-y-3">
+                  {/* Poziom trudności */}
+                  {exercise.difficulty && (
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs font-medium text-muted-foreground">Poziom:</span>
+                      <span
+                        class={`text-xs font-medium px-2 py-1 rounded ${difficultyLabels[exercise.difficulty].class}`}
+                      >
+                        {difficultyLabels[exercise.difficulty].label}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Partie mięśniowe */}
+                  {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
+                    <div>
+                      <span class="text-xs font-medium text-muted-foreground">Partie mięśniowe:</span>
+                      <div class="flex flex-wrap gap-1 mt-1">
+                        {exercise.muscleGroups.map((muscle) => (
+                          <span class="text-xs bg-primary/5 text-primary px-2 py-0.5 rounded">
+                            {muscleGroupLabels[muscle] || muscle}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sprzęt */}
+                  {exercise.equipment && exercise.equipment.length > 0 && (
+                    <div>
+                      <span class="text-xs font-medium text-muted-foreground">Sprzęt:</span>
+                      <div class="flex flex-wrap gap-1 mt-1">
+                        {exercise.equipment.map((item) => (
+                          <span class="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Instrukcje */}
+                  {exercise.instructions && (
+                    <div class="pt-2 border-t">
+                      <p class="text-xs text-muted-foreground leading-relaxed">
+                        {exercise.instructions}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer karty z akcjami */}
+                <div class="p-4 pt-0">
+                  <button class="w-full inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 transition-colors">
+                    <span>➕</span>
+                    <span>Dodaj do treningu</span>
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    })
+  }
+
+  <!-- Informacja o liczbie ćwiczeń -->
+  <div class="mt-12 p-6 rounded-lg bg-muted/50 text-center">
+    <p class="text-sm text-muted-foreground">
+      Łącznie dostępnych: <span class="font-bold text-foreground">{mockExerciseTemplates.length}</span> ćwiczeń
+    </p>
+  </div>
+</Layout>
+
+<script>
+  // Filtrowanie ćwiczeń po kategorii
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const exerciseSections = document.querySelectorAll(".exercise-section");
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const target = e.currentTarget as HTMLElement;
+      const selectedCategory = target.dataset.category;
+
+      // Aktualizacja stanu aktywnego przycisku
+      filterButtons.forEach((btn) => {
+        btn.classList.remove("active", "bg-primary", "text-primary-foreground");
+        btn.classList.add("bg-card");
+      });
+
+      target.classList.add("active", "bg-primary", "text-primary-foreground");
+      target.classList.remove("bg-card");
+
+      // Filtrowanie sekcji
+      if (selectedCategory === "all") {
+        // Pokaż wszystkie sekcje
+        exerciseSections.forEach((section) => {
+          (section as HTMLElement).style.display = "block";
+        });
+      } else {
+        // Pokaż tylko wybraną kategorię
+        exerciseSections.forEach((section) => {
+          const sectionCategory = (section as HTMLElement).dataset.category;
+          if (sectionCategory === selectedCategory) {
+            (section as HTMLElement).style.display = "block";
+          } else {
+            (section as HTMLElement).style.display = "none";
+          }
+        });
+      }
+    });
+  });
+</script>
