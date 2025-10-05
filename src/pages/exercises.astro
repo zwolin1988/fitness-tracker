@@ -19,25 +19,36 @@ const difficultyLabels = {
 };
 
 const muscleGroupLabels: Record<string, string> = {
-  chest: "Klatka",
+  chest: "Klatka piersiowa",
   back: "Plecy",
   shoulders: "Barki",
   biceps: "Biceps",
   triceps: "Triceps",
   legs: "Nogi",
   glutes: "Pośladki",
-  core: "Core",
-  cardio: "Cardio",
+  core: "Mięśnie brzucha",
+  cardio: "Układ krążenia",
   "full-body": "Całe ciało",
+};
+
+const equipmentLabels: Record<string, string> = {
+  barbell: "Sztanga",
+  dumbbells: "Hantle",
+  bench: "Ławka",
+  "pull-up-bar": "Drążek",
+  "squat-rack": "Klatka do przysiadów",
+  "leg-press-machine": "Maszyna do wypychania nóg",
+  "dip-bars": "Poręcze",
+  bike: "Rower",
+  "rowing-machine": "Wioślarz",
+  "yoga-mat": "Mata do jogi",
 };
 ---
 
 <Layout title="Katalog Ćwiczeń - Fitness Tracker">
   <div class="mb-8">
     <h1 class="text-4xl font-bold mb-2">Katalog Ćwiczeń</h1>
-    <p class="text-lg text-muted-foreground">
-      Przeglądaj dostępne ćwiczenia i dodaj je do swojego treningu
-    </p>
+    <p class="text-lg text-muted-foreground">Przeglądaj dostępne ćwiczenia i dodaj je do swojego treningu</p>
   </div>
 
   <!-- Nawigacja po kategoriach -->
@@ -84,20 +95,26 @@ const muscleGroupLabels: Record<string, string> = {
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {exercises.map((exercise) => (
-              <article class="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden" data-category={category.id}>
-                {/* Header karty */}
-                <div class="p-4 border-b bg-muted/30">
-                  <h3 class="font-semibold text-lg group-hover:text-primary transition-colors">
-                    {exercise.name}
-                  </h3>
-                  {exercise.description && (
-                    <p class="text-sm text-muted-foreground mt-1">{exercise.description}</p>
-                  )}
+              <article
+                class="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden grid grid-rows-[auto_auto_auto_1fr_auto] h-full"
+                data-category={category.id}
+              >
+                {/* Header karty - stała wysokość */}
+                <div class="p-4 border-b bg-muted/30 min-h-[120px] flex flex-col justify-between">
+                  <div>
+                    <h3 class="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                      {exercise.name}
+                    </h3>
+                    <div class="mt-2 flex-grow">
+                      {exercise.description && (
+                        <p class="text-sm text-muted-foreground line-clamp-3 leading-relaxed">{exercise.description}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Ciało karty */}
-                <div class="p-4 space-y-3">
-                  {/* Poziom trudności */}
+                {/* Poziom trudności - stała wysokość */}
+                <div class="p-3 border-b bg-background/50 min-h-[50px] flex items-center">
                   {exercise.difficulty && (
                     <div class="flex items-center gap-2">
                       <span class="text-xs font-medium text-muted-foreground">Poziom:</span>
@@ -108,12 +125,15 @@ const muscleGroupLabels: Record<string, string> = {
                       </span>
                     </div>
                   )}
+                </div>
 
+                {/* Partie mięśniowe i sprzęt - stała wysokość */}
+                <div class="p-3 space-y-2 border-b bg-muted/10 min-h-[100px]">
                   {/* Partie mięśniowe */}
                   {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
                     <div>
-                      <span class="text-xs font-medium text-muted-foreground">Partie mięśniowe:</span>
-                      <div class="flex flex-wrap gap-1 mt-1">
+                      <span class="text-xs font-medium text-muted-foreground block mb-1">Partie mięśniowe:</span>
+                      <div class="flex flex-wrap gap-1">
                         {exercise.muscleGroups.map((muscle) => (
                           <span class="text-xs bg-primary/5 text-primary px-2 py-0.5 rounded">
                             {muscleGroupLabels[muscle] || muscle}
@@ -126,29 +146,30 @@ const muscleGroupLabels: Record<string, string> = {
                   {/* Sprzęt */}
                   {exercise.equipment && exercise.equipment.length > 0 && (
                     <div>
-                      <span class="text-xs font-medium text-muted-foreground">Sprzęt:</span>
-                      <div class="flex flex-wrap gap-1 mt-1">
+                      <span class="text-xs font-medium text-muted-foreground block mb-1">Sprzęt:</span>
+                      <div class="flex flex-wrap gap-1">
                         {exercise.equipment.map((item) => (
                           <span class="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
-                            {item}
+                            {equipmentLabels[item] || item}
                           </span>
                         ))}
                       </div>
                     </div>
                   )}
+                </div>
 
-                  {/* Instrukcje */}
+                {/* Instrukcje - elastyczna wysokość */}
+                <div class="p-3 flex-grow overflow-hidden">
                   {exercise.instructions && (
-                    <div class="pt-2 border-t">
-                      <p class="text-xs text-muted-foreground leading-relaxed">
-                        {exercise.instructions}
-                      </p>
+                    <div>
+                      <span class="text-xs font-medium text-muted-foreground block mb-2">Jak wykonać:</span>
+                      <p class="text-xs text-muted-foreground leading-relaxed line-clamp-4">{exercise.instructions}</p>
                     </div>
                   )}
                 </div>
 
-                {/* Footer karty z akcjami */}
-                <div class="p-4 pt-0">
+                {/* Footer karty z akcjami - stała wysokość */}
+                <div class="p-4 bg-muted/20 min-h-[60px] flex items-center">
                   <button class="w-full inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 transition-colors">
                     <span>➕</span>
                     <span>Dodaj do treningu</span>
@@ -170,42 +191,4 @@ const muscleGroupLabels: Record<string, string> = {
   </div>
 </Layout>
 
-<script>
-  // Filtrowanie ćwiczeń po kategorii
-  const filterButtons = document.querySelectorAll(".filter-btn");
-  const exerciseSections = document.querySelectorAll(".exercise-section");
-
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const target = e.currentTarget as HTMLElement;
-      const selectedCategory = target.dataset.category;
-
-      // Aktualizacja stanu aktywnego przycisku
-      filterButtons.forEach((btn) => {
-        btn.classList.remove("active", "bg-primary", "text-primary-foreground");
-        btn.classList.add("bg-card");
-      });
-
-      target.classList.add("active", "bg-primary", "text-primary-foreground");
-      target.classList.remove("bg-card");
-
-      // Filtrowanie sekcji
-      if (selectedCategory === "all") {
-        // Pokaż wszystkie sekcje
-        exerciseSections.forEach((section) => {
-          (section as HTMLElement).style.display = "block";
-        });
-      } else {
-        // Pokaż tylko wybraną kategorię
-        exerciseSections.forEach((section) => {
-          const sectionCategory = (section as HTMLElement).dataset.category;
-          if (sectionCategory === selectedCategory) {
-            (section as HTMLElement).style.display = "block";
-          } else {
-            (section as HTMLElement).style.display = "none";
-          }
-        });
-      }
-    });
-  });
-</script>
+<!-- Skrypt do filtrowania zostanie dodany później jako komponent React -->
