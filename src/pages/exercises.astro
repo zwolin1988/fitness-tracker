@@ -1,48 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { mockExerciseTemplates, getExerciseTemplatesByCategory } from "@/lib/mocks";
+import { mockExerciseTemplates } from "@/lib/mocks";
+import { ExerciseCatalog } from "@/components/exercises";
+import type { Category } from "@/types";
 
-// Grupowanie ćwiczeń po kategoriach
-const categories = [
+const categories: Category[] = [
   { id: "strength", label: "Siłowe", icon: "💪" },
   { id: "cardio", label: "Cardio", icon: "🏃" },
   { id: "flexibility", label: "Rozciąganie", icon: "🧘" },
   { id: "sports", label: "Sport", icon: "⚽" },
   { id: "other", label: "Inne", icon: "🎯" },
-] as const;
-
-// Mapy trudności i sprzętu
-const difficultyLabels = {
-  beginner: { label: "Początkujący", class: "bg-green-500/10 text-green-500" },
-  intermediate: { label: "Średniozaawansowany", class: "bg-yellow-500/10 text-yellow-500" },
-  advanced: { label: "Zaawansowany", class: "bg-red-500/10 text-red-500" },
-};
-
-const muscleGroupLabels: Record<string, string> = {
-  chest: "Klatka piersiowa",
-  back: "Plecy",
-  shoulders: "Barki",
-  biceps: "Biceps",
-  triceps: "Triceps",
-  legs: "Nogi",
-  glutes: "Pośladki",
-  core: "Mięśnie brzucha",
-  cardio: "Układ krążenia",
-  "full-body": "Całe ciało",
-};
-
-const equipmentLabels: Record<string, string> = {
-  barbell: "Sztanga",
-  dumbbells: "Hantle",
-  bench: "Ławka",
-  "pull-up-bar": "Drążek",
-  "squat-rack": "Klatka do przysiadów",
-  "leg-press-machine": "Maszyna do wypychania nóg",
-  "dip-bars": "Poręcze",
-  bike: "Rower",
-  "rowing-machine": "Wioślarz",
-  "yoga-mat": "Mata do jogi",
-};
+];
 ---
 
 <Layout title="Katalog Ćwiczeń - Fitness Tracker">
@@ -51,144 +19,5 @@ const equipmentLabels: Record<string, string> = {
     <p class="text-lg text-muted-foreground">Przeglądaj dostępne ćwiczenia i dodaj je do swojego treningu</p>
   </div>
 
-  <!-- Nawigacja po kategoriach -->
-  <div class="flex flex-wrap gap-2 mb-8">
-    <button
-      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border bg-primary text-primary-foreground hover:bg-primary/90 transition-colors filter-btn active"
-      data-category="all"
-    >
-      <span>📋</span>
-      <span class="font-medium">Wszystkie</span>
-      <span class="text-xs bg-primary-foreground/20 text-primary-foreground px-2 py-0.5 rounded-full">
-        {mockExerciseTemplates.length}
-      </span>
-    </button>
-    {
-      categories.map((category) => {
-        const count = getExerciseTemplatesByCategory(category.id).length;
-        return (
-          <button
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border bg-card hover:bg-accent hover:text-accent-foreground transition-colors filter-btn"
-            data-category={category.id}
-          >
-            <span>{category.icon}</span>
-            <span class="font-medium">{category.label}</span>
-            <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{count}</span>
-          </button>
-        );
-      })
-    }
-  </div>
-
-  <!-- Grid z ćwiczeniami -->
-  {
-    categories.map((category) => {
-      const exercises = getExerciseTemplatesByCategory(category.id);
-      if (exercises.length === 0) return null;
-
-      return (
-        <section class="exercise-section mb-12" data-category={category.id}>
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <span>{category.icon}</span>
-            <span>{category.label}</span>
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {exercises.map((exercise) => (
-              <article
-                class="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden grid grid-rows-[auto_auto_auto_1fr_auto] h-full"
-                data-category={category.id}
-              >
-                {/* Header karty - stała wysokość */}
-                <div class="p-4 border-b bg-muted/30 min-h-[120px] flex flex-col justify-between">
-                  <div>
-                    <h3 class="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2 leading-tight">
-                      {exercise.name}
-                    </h3>
-                    <div class="mt-2 flex-grow">
-                      {exercise.description && (
-                        <p class="text-sm text-muted-foreground line-clamp-3 leading-relaxed">{exercise.description}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Poziom trudności - stała wysokość */}
-                <div class="p-3 border-b bg-background/50 min-h-[50px] flex items-center">
-                  {exercise.difficulty && (
-                    <div class="flex items-center gap-2">
-                      <span class="text-xs font-medium text-muted-foreground">Poziom:</span>
-                      <span
-                        class={`text-xs font-medium px-2 py-1 rounded ${difficultyLabels[exercise.difficulty].class}`}
-                      >
-                        {difficultyLabels[exercise.difficulty].label}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Partie mięśniowe i sprzęt - stała wysokość */}
-                <div class="p-3 space-y-2 border-b bg-muted/10 min-h-[100px]">
-                  {/* Partie mięśniowe */}
-                  {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
-                    <div>
-                      <span class="text-xs font-medium text-muted-foreground block mb-1">Partie mięśniowe:</span>
-                      <div class="flex flex-wrap gap-1">
-                        {exercise.muscleGroups.map((muscle) => (
-                          <span class="text-xs bg-primary/5 text-primary px-2 py-0.5 rounded">
-                            {muscleGroupLabels[muscle] || muscle}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Sprzęt */}
-                  {exercise.equipment && exercise.equipment.length > 0 && (
-                    <div>
-                      <span class="text-xs font-medium text-muted-foreground block mb-1">Sprzęt:</span>
-                      <div class="flex flex-wrap gap-1">
-                        {exercise.equipment.map((item) => (
-                          <span class="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
-                            {equipmentLabels[item] || item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Instrukcje - elastyczna wysokość */}
-                <div class="p-3 flex-grow overflow-hidden">
-                  {exercise.instructions && (
-                    <div>
-                      <span class="text-xs font-medium text-muted-foreground block mb-2">Jak wykonać:</span>
-                      <p class="text-xs text-muted-foreground leading-relaxed line-clamp-4">{exercise.instructions}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer karty z akcjami - stała wysokość */}
-                <div class="p-4 bg-muted/20 min-h-[60px] flex items-center">
-                  <button class="w-full inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 transition-colors">
-                    <span>➕</span>
-                    <span>Dodaj do treningu</span>
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      );
-    })
-  }
-
-  <!-- Informacja o liczbie ćwiczeń -->
-  <div class="mt-12 p-6 rounded-lg bg-muted/50 text-center">
-    <p class="text-sm text-muted-foreground">
-      Łącznie dostępnych: <span class="font-bold text-foreground">{mockExerciseTemplates.length}</span> ćwiczeń
-    </p>
-  </div>
+  <ExerciseCatalog client:load exercises={mockExerciseTemplates} categories={categories} />
 </Layout>
-
-<script is:inline src="/exercises-filter.js"></script>

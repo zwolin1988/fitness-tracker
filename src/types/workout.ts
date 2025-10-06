@@ -1,11 +1,20 @@
 /**
+ * Kategoria ćwiczenia
+ */
+export interface Category {
+  id: "strength" | "cardio" | "flexibility" | "sports" | "other";
+  label: string;
+  icon: string;
+}
+
+/**
  * Szablon ćwiczenia - katalog dostępnych ćwiczeń w aplikacji
  */
 export interface ExerciseTemplate {
   id: string;
   name: string;
   description?: string;
-  category: "strength" | "cardio" | "flexibility" | "sports" | "other";
+  category: Category["id"];
   muscleGroups?: string[]; // np. ["chest", "triceps"]
   equipment?: string[]; // np. ["barbell", "bench"]
   difficulty?: "beginner" | "intermediate" | "advanced";
