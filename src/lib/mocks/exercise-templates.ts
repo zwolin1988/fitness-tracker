@@ -1,4 +1,4 @@
-import type { ExerciseTemplate } from "@/types";
+import type { ExerciseTemplate } from "@/models";
 
 /**
  * Mock data - katalog dostępnych ćwiczeń

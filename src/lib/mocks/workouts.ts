@@ -1,4 +1,4 @@
-import type { Workout, WorkoutExercise } from "@/types";
+import type { Workout, WorkoutExercise } from "@/models";
 
 /**
  * Mock data dla sesji treningowych użytkownika

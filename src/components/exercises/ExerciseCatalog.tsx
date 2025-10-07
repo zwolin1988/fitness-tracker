@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import type { ExerciseTemplate, Category } from "@/types";
+import type { ExerciseTemplate, Category } from "@/models";
 import { CategoryFilter } from "./CategoryFilter";
 import { ExerciseCard } from "./ExerciseCard";
 

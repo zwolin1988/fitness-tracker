@@ -28,7 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `./src/pages/` - File-based routing (dashboard, workouts, goals, progress, auth pages)
 - `./src/components/` - Mixed Astro (static) and React (interactive) components
 - `./src/components/ui/` - Shadcn/ui components (configured for non-RSC React)
-- `./src/types/` - Domain entities (User, Goal, Workout) with barrel exports via `src/types/index.ts`
+- `./src/models/` - Domain entities (User, Goal, Workout) with barrel exports via `src/models/index.ts`
 - `./src/lib/utils.ts` - Utilities (cn() helper for class merging)
 - `./src/styles/global.css` - Tailwind 4 with CSS variables, dark mode, and @theme inline
 - `./public/` - Static assets
@@ -74,26 +74,26 @@ When creating API routes in `src/pages/api/`:
 
 ## Type System
 
-- Domain models in `src/types/` with individual files per entity
-- Barrel exports via `src/types/index.ts` for clean imports
+- Domain models in `src/models/` with individual files per entity
+- Barrel exports via `src/models/index.ts` for clean imports
 - Polish language for UI text, English for code/types/comments
 
 ### Workout Data Model
 
 The app uses a three-tier structure for workout tracking:
 
-1. **ExerciseTemplate** (`src/types/workout.ts`) - Catalog of available exercises
+1. **ExerciseTemplate** (`src/models/workout.ts`) - Catalog of available exercises
    - Global library of exercises users can choose from
    - Includes metadata: category, muscle groups, equipment, difficulty, instructions
    - Example: "Przysiad ze sztangą", "Wyciskanie hantli", "Bieg"
 
-2. **Workout** (`src/types/workout.ts`) - User's workout session
+2. **Workout** (`src/models/workout.ts`) - User's workout session
    - Represents a single training session
    - Has `startedAt` and `completedAt` timestamps
    - Can be in-progress (`completedAt` is undefined)
    - Contains calculated metrics (duration, calories burned)
 
-3. **WorkoutExercise** (`src/types/workout.ts`) - Exercise performed in a workout
+3. **WorkoutExercise** (`src/models/workout.ts`) - Exercise performed in a workout
    - Links ExerciseTemplate to a specific Workout
    - Stores actual performance data (sets, reps, weight, distance, etc.)
    - Has `order` field for sequencing exercises in the workout
