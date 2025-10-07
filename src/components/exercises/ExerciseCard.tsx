@@ -1,5 +1,5 @@
 import { memo } from "react";
-import type { ExerciseTemplate } from "@/types";
+import type { ExerciseTemplate } from "@/models";
 import { DIFFICULTY_LABELS, MUSCLE_GROUP_LABELS, EQUIPMENT_LABELS } from "@/lib/constants/exercise-labels";
 
 interface ExerciseCardProps {
