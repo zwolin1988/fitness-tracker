@@ -18,9 +18,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkou
           </h3>
           <div className="mt-2 flex-grow">
             {exercise.description && (
-              <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
-                {exercise.description}
-              </p>
+              <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">{exercise.description}</p>
             )}
           </div>
         </div>
@@ -31,9 +29,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkou
         {exercise.difficulty && (
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground">Poziom:</span>
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded ${DIFFICULTY_LABELS[exercise.difficulty].class}`}
-            >
+            <span className={`text-xs font-medium px-2 py-1 rounded ${DIFFICULTY_LABELS[exercise.difficulty].class}`}>
               {DIFFICULTY_LABELS[exercise.difficulty].label}
             </span>
           </div>
@@ -45,9 +41,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkou
         {/* Partie mięśniowe */}
         {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
           <div>
-            <span className="text-xs font-medium text-muted-foreground block mb-1">
-              Partie mięśniowe:
-            </span>
+            <span className="text-xs font-medium text-muted-foreground block mb-1">Partie mięśniowe:</span>
             <div className="flex flex-wrap gap-1">
               {exercise.muscleGroups.map((muscle) => (
                 <span key={muscle} className="text-xs bg-primary/5 text-primary px-2 py-0.5 rounded">
@@ -77,12 +71,8 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkou
       <div className="p-3 flex-grow overflow-hidden">
         {exercise.instructions && (
           <div>
-            <span className="text-xs font-medium text-muted-foreground block mb-2">
-              Jak wykonać:
-            </span>
-            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">
-              {exercise.instructions}
-            </p>
+            <span className="text-xs font-medium text-muted-foreground block mb-2">Jak wykonać:</span>
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">{exercise.instructions}</p>
           </div>
         )}
       </div>

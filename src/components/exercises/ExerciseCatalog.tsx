@@ -90,8 +90,7 @@ export function ExerciseCatalog({ exercises, categories }: ExerciseCatalogProps)
         <p className="text-sm text-muted-foreground">
           {selectedCategory === "all" ? (
             <>
-              Łącznie dostępnych:{" "}
-              <span className="font-bold text-foreground">{exercises.length}</span> ćwiczeń
+              Łącznie dostępnych: <span className="font-bold text-foreground">{exercises.length}</span> ćwiczeń
             </>
           ) : (
             <>
