@@ -1,8 +1,27 @@
-import { defineMiddleware } from 'astro:middleware';
+import { createClient } from "@supabase/supabase-js";
+import { defineMiddleware } from "astro:middleware";
 
-import { supabaseClient } from '../db/supabase.client.ts';
+import type { Database } from "../db/database.types.ts";
+
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 
 export const onRequest = defineMiddleware((context, next) => {
-  context.locals.supabase = supabaseClient;
+  // Get authorization token from header
+  const authHeader = context.request.headers.get("Authorization");
+  const token = authHeader?.replace("Bearer ", "");
+
+  // Create Supabase client with user's token if available
+  const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {},
+    },
+  });
+
+  context.locals.supabase = supabase;
   return next();
 });
