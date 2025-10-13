@@ -1,0 +1,134 @@
+// src/pages/api/workouts/[workoutId]/sets/[setId].ts
+// API endpoint for updating workout sets
+
+import type { APIRoute } from "astro";
+
+import { UpdateWorkoutSetSchema, WorkoutSetParamsSchema } from "@/lib/schemas/workout";
+import { WorkoutError, updateWorkoutSet } from "@/lib/services/workout";
+
+// Disable prerendering for this API endpoint
+export const prerender = false;
+
+/**
+ * PATCH /api/workouts/{workoutId}/sets/{setId}
+ * Updates a workout set (partial update)
+ * Requires: Authorization header with Bearer token
+ * Path params: workoutId (uuid), setId (uuid)
+ * Body: { repetitions?, weight?, distance?, duration? }
+ * Note: At least one field must be provided for update
+ */
+export const PATCH: APIRoute = async ({ params, request, locals }) => {
+  try {
+    // Get Supabase client from context
+    const supabase = locals.supabase;
+    if (!supabase) {
+      return new Response(JSON.stringify({ error: "Database client not available" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Get authenticated user from session
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized",
+          message: "Invalid or missing authentication token",
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Validate path parameters
+    const paramValidation = WorkoutSetParamsSchema.safeParse(params);
+
+    if (!paramValidation.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid path parameters",
+          details: paramValidation.error.flatten().fieldErrors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const { workoutId, setId } = paramValidation.data;
+
+    // Parse and validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid JSON",
+          message: "Request body must be valid JSON",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const validationResult = UpdateWorkoutSetSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Validation failed",
+          details: validationResult.error.flatten().fieldErrors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Update workout set
+    const updatedSet = await updateWorkoutSet(supabase, setId, workoutId, user.id, validationResult.data);
+
+    return new Response(JSON.stringify(updatedSet), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    // Handle WorkoutError
+    if (error instanceof WorkoutError) {
+      return new Response(
+        JSON.stringify({
+          error: error.message,
+          code: error.code,
+        }),
+        {
+          status: error.statusCode,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Handle unexpected errors
+    console.error("Unexpected error in PATCH /api/workouts/[workoutId]/sets/[setId]:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+};
