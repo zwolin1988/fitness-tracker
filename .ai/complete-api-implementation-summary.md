@@ -149,24 +149,27 @@ Kompletna implementacja REST API dla aplikacji Fitness Tracker, obejmująca wszy
 
 #### Plan Management (5)
 1. ✅ **POST /api/plans** - Tworzenie planu treningowego
-   - Body: `{ name, description?, exerciseIds[] }`
+   - Body: `{ name, description?, exercises: [{ exerciseId, sets?: [{ repetitions, weight }] }] }`
+   - **Bulk create:** Można utworzyć plan z wszystkimi setami w jednym requeście
    - Limit: max 7 planów per user
-   - Automatyczne tworzenie plan_exercises
+   - Automatyczne tworzenie plan_exercises i plan_exercise_sets
 
 2. ✅ **GET /api/plans** - Lista planów użytkownika
    - Sortowanie po created_at DESC
-   - Tylko własne plany
+   - Tylko własne plany (soft-deleted plany są wykluczane)
 
 3. ✅ **GET /api/plans/{id}** - Szczegóły planu
    - Zwraca plan + exercises + sets
    - JOIN na plan_exercises i plan_exercise_sets
 
 4. ✅ **PUT /api/plans/{id}** - Aktualizacja planu
-   - Body: `{ name?, description?, exerciseIds? }`
-   - Opcjonalna zmiana listy ćwiczeń
+   - Body: `{ name?, description?, exercises? }`
+   - Opcjonalna zmiana listy ćwiczeń i setów
 
-5. ✅ **DELETE /api/plans/{id}** - Usuwanie planu
-   - CASCADE delete dla plan_exercises i sets
+5. ✅ **DELETE /api/plans/{id}** - Soft delete planu
+   - Ustawia `deleted_at` timestamp zamiast hard delete
+   - Workouts zachowują referencję do planu
+   - Historia i statystyki zachowane
 
 #### Plan Sets Management (3)
 6. ✅ **POST /api/plans/{planId}/sets** - Dodawanie serii do planu
@@ -204,7 +207,8 @@ Kompletna implementacja REST API dla aplikacji Fitness Tracker, obejmująca wszy
 - **Auto-generacja:** set_order automatycznie inkrementowany
 - **Ownership checking:** Wszystkie operacje weryfikują user_id
 - **Foreign key validation:** Sprawdzanie istnienia exercises przed dodaniem
-- **CASCADE delete:** Usuwanie planu usuwa powiązane rekordy
+- **Soft delete:** Usuwanie planu ustawia deleted_at timestamp, zachowując historię workoutów
+- **Bulk create:** Możliwość utworzenia planu z wszystkimi exercises i setami w jednym requeście
 
 ---
 
@@ -214,9 +218,10 @@ Kompletna implementacja REST API dla aplikacji Fitness Tracker, obejmująca wszy
 
 #### Workout Management (4)
 1. ✅ **POST /api/workouts** - Rozpoczęcie treningu
-   - Body: `{ exerciseTemplateId }`
+   - Body: `{ planId }` (REQUIRED)
    - **Auto-generacja start_time** (current timestamp)
-   - Automatyczne utworzenie pierwszej serii
+   - **Automatyczne kopiowanie exercises i sets z training plan**
+   - Workout zachowuje referencję do planu (training_plan_id)
 
 2. ✅ **GET /api/workouts** - Lista treningów
    - Query: `?start_date=&end_date=` (ISO 8601)

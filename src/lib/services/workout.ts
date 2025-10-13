@@ -32,6 +32,7 @@ export class WorkoutError extends Error {
 export interface WorkoutDTO {
   id: string;
   userId: string;
+  trainingPlanId: string; // Required - every workout is based on a plan
   startTime: string;
   endTime: string | null;
   duration: number | null; // in seconds
@@ -54,13 +55,12 @@ export interface WorkoutDetailDTO extends WorkoutDTO {
 export interface WorkoutSetDTO {
   id: string;
   workoutId: string;
-  exerciseTemplateId: string;
+  exerciseId: string;
   exerciseName: string;
-  repetitions: number | null;
-  weight: number | null;
-  distance: number | null;
-  duration: number | null;
+  repetitions: number;
+  weight: number;
   setOrder: number;
+  completed: boolean; // Whether user has completed this set
   createdAt: string;
 }
 
@@ -69,23 +69,20 @@ export interface WorkoutSetDTO {
 // ===========================
 
 export interface CreateWorkoutCommand {
-  exerciseTemplateId: string;
+  planId: string; // Required - ID of training plan to base workout on
 }
 
 export interface CreateWorkoutSetCommand {
   workout_id: string;
-  exercise_template_id: string;
-  repetitions?: number | null;
-  weight?: number | null;
-  distance?: number | null;
-  duration?: number | null;
+  exercise_id: string;
+  repetitions: number;
+  weight: number;
 }
 
 export interface UpdateWorkoutSetCommand {
-  repetitions?: number | null;
-  weight?: number | null;
-  distance?: number | null;
-  duration?: number | null;
+  repetitions?: number;
+  weight?: number;
+  completed?: boolean;
 }
 
 export interface WorkoutListFilters {
@@ -153,24 +150,33 @@ async function checkWorkoutNotCompleted(
 }
 
 /**
- * Validates that an exercise template exists
- * @throws WorkoutError if exercise template doesn't exist
+ * Validates that a training plan exists and belongs to the user
+ * @throws WorkoutError if plan doesn't exist or doesn't belong to user
  */
-async function validateExerciseTemplateExists(
+async function validateTrainingPlanAccess(
   supabase: TypedSupabaseClient,
-  exerciseTemplateId: string
+  planId: string,
+  userId: string
 ): Promise<void> {
-  const { data: exercise, error } = await supabase
-    .from("exercise_templates")
-    .select("id")
-    .eq("id", exerciseTemplateId)
+  const { data: plan, error } = await supabase
+    .from("training_plans")
+    .select("id, user_id")
+    .eq("id", planId)
     .single();
 
-  if (error || !exercise) {
+  if (error || !plan) {
     throw new WorkoutError(
-      `Exercise template with ID ${exerciseTemplateId} not found`,
+      "Training plan not found",
       404,
-      "EXERCISE_TEMPLATE_NOT_FOUND"
+      "TRAINING_PLAN_NOT_FOUND"
+    );
+  }
+
+  if (plan.user_id !== userId) {
+    throw new WorkoutError(
+      "You do not have access to this training plan",
+      403,
+      "TRAINING_PLAN_ACCESS_DENIED"
     );
   }
 }
@@ -183,7 +189,7 @@ async function getNextSetOrder(
   workoutId: string
 ): Promise<number> {
   const { data, error } = await supabase
-    .from("workout_exercises")
+    .from("workout_sets")
     .select("set_order")
     .eq("workout_id", workoutId)
     .order("set_order", { ascending: false })
@@ -210,7 +216,7 @@ function calculateWorkoutSummary(workout: any): {
     ? Math.floor((new Date(workout.end_time).getTime() - new Date(workout.start_time).getTime()) / 1000)
     : null;
 
-  const totalSets = workout.workout_exercises?.length || 0;
+  const totalSets = workout.workout_sets?.length || 0;
 
   // Simple calorie estimation: 5 calories per set + 0.1 calorie per second
   const estimatedCalories = duration
@@ -229,6 +235,7 @@ function mapWorkoutToDTO(workout: any): WorkoutDTO {
   return {
     id: workout.id,
     userId: workout.user_id,
+    trainingPlanId: workout.training_plan_id,
     startTime: workout.start_time,
     endTime: workout.end_time,
     duration,
@@ -246,13 +253,12 @@ function mapWorkoutSetToDTO(set: any): WorkoutSetDTO {
   return {
     id: set.id,
     workoutId: set.workout_id,
-    exerciseTemplateId: set.exercise_template_id,
-    exerciseName: set.exercise_templates?.name || "Unknown Exercise",
+    exerciseId: set.exercise_id,
+    exerciseName: set.exercises?.name || "Unknown Exercise",
     repetitions: set.repetitions,
     weight: set.weight,
-    distance: set.distance,
-    duration: set.duration,
     setOrder: set.set_order,
+    completed: set.completed ?? false,
     createdAt: set.created_at,
   };
 }
@@ -262,22 +268,24 @@ function mapWorkoutSetToDTO(set: any): WorkoutSetDTO {
 // ===========================
 
 /**
- * Creates a new workout session
- * Auto-generates start_time and creates first exercise set
+ * Creates a new workout session based on a training plan
+ * Auto-generates start_time and copies exercises/sets from the plan
+ * All sets are marked as completed=false initially
  */
 export async function createWorkout(
   supabase: TypedSupabaseClient,
   userId: string,
   command: CreateWorkoutCommand
 ): Promise<WorkoutDetailDTO> {
-  // Validate exercise template exists
-  await validateExerciseTemplateExists(supabase, command.exerciseTemplateId);
+  // Validate training plan exists and user has access
+  await validateTrainingPlanAccess(supabase, command.planId, userId);
 
-  // Create workout with auto start_time
+  // Create workout with training_plan_id and auto start_time
   const { data: workout, error: workoutError } = await supabase
     .from("workouts")
     .insert({
       user_id: userId,
+      training_plan_id: command.planId,
       start_time: new Date().toISOString(),
     })
     .select()
@@ -288,25 +296,51 @@ export async function createWorkout(
     throw new WorkoutError("Failed to create workout", 500, "WORKOUT_CREATE_FAILED");
   }
 
-  // Create first exercise set with set_order = 1
-  const { data: firstSet, error: setError } = await supabase
-    .from("workout_exercises")
-    .insert({
-      workout_id: workout.id,
-      exercise_template_id: command.exerciseTemplateId,
-      set_order: 1,
-    })
-    .select("*, exercise_templates(name)")
-    .single();
+  // Fetch plan exercise sets (template for workout)
+  const { data: planSets, error: planSetsError } = await supabase
+    .from("plan_exercise_sets")
+    .select("exercise_id, repetitions, weight, set_order")
+    .eq("training_plan_id", command.planId)
+    .order("set_order", { ascending: true });
 
-  if (setError || !firstSet) {
-    console.error("Error creating first exercise set:", setError);
-    throw new WorkoutError("Failed to create initial exercise set", 500, "WORKOUT_SET_CREATE_FAILED");
+  if (planSetsError) {
+    console.error("Error fetching plan sets:", planSetsError);
+    throw new WorkoutError("Failed to fetch training plan exercises", 500, "PLAN_SETS_FETCH_FAILED");
+  }
+
+  // Copy plan sets to workout_exercises
+  let copiedSets: WorkoutSetDTO[] = [];
+
+  if (planSets && planSets.length > 0) {
+    // Prepare data for bulk insert
+    const workoutExercisesData = planSets.map((planSet) => ({
+      workout_id: workout.id,
+      exercise_id: planSet.exercise_id,
+      repetitions: planSet.repetitions,
+      weight: planSet.weight,
+      set_order: planSet.set_order,
+      completed: false, // User will mark as completed during workout
+    }));
+
+    // Insert all sets
+    const { data: insertedSets, error: insertError } = await supabase
+      .from("workout_sets")
+      .insert(workoutExercisesData)
+      .select("*, exercises(name)");
+
+    if (insertError || !insertedSets) {
+      console.error("Error copying sets to workout:", insertError);
+      // Rollback: delete the workout
+      await supabase.from("workouts").delete().eq("id", workout.id);
+      throw new WorkoutError("Failed to copy exercises to workout", 500, "WORKOUT_EXERCISES_COPY_FAILED");
+    }
+
+    copiedSets = insertedSets.map(mapWorkoutSetToDTO);
   }
 
   return {
     ...mapWorkoutToDTO(workout),
-    sets: [mapWorkoutSetToDTO(firstSet)],
+    sets: copiedSets,
   };
 }
 
@@ -320,7 +354,7 @@ export async function listWorkouts(
 ): Promise<WorkoutDTO[]> {
   let query = supabase
     .from("workouts")
-    .select("*, workout_exercises(*)")
+    .select("*, workout_sets(*)")
     .eq("user_id", userId)
     .order("start_time", { ascending: false });
 
@@ -359,9 +393,9 @@ export async function getWorkoutById(
     .select(
       `
       *,
-      workout_exercises(
+      workout_sets(
         *,
-        exercise_templates(name)
+        exercises(name)
       )
     `
     )
@@ -374,7 +408,7 @@ export async function getWorkoutById(
   }
 
   // Map sets with exercise names
-  const sets = (workout.workout_exercises || [])
+  const sets = (workout.workout_sets || [])
     .sort((a: any, b: any) => a.set_order - b.set_order)
     .map(mapWorkoutSetToDTO);
 
@@ -438,6 +472,7 @@ export async function endWorkout(
 
 /**
  * Creates a new workout set/exercise
+ * User can add additional sets during workout
  */
 export async function createWorkoutSet(
   supabase: TypedSupabaseClient,
@@ -451,25 +486,36 @@ export async function createWorkoutSet(
   // Check workout is not completed
   await checkWorkoutNotCompleted(supabase, workoutId);
 
-  // Validate exercise template exists
-  await validateExerciseTemplateExists(supabase, command.exercise_template_id);
+  // Validate exercise exists
+  const { data: exercise, error: exerciseError } = await supabase
+    .from("exercises")
+    .select("id")
+    .eq("id", command.exercise_id)
+    .single();
+
+  if (exerciseError || !exercise) {
+    throw new WorkoutError(
+      `Exercise with ID ${command.exercise_id} not found`,
+      404,
+      "EXERCISE_NOT_FOUND"
+    );
+  }
 
   // Get next set order
   const setOrder = await getNextSetOrder(supabase, workoutId);
 
   // Create set
   const { data: set, error } = await supabase
-    .from("workout_exercises")
+    .from("workout_sets")
     .insert({
       workout_id: command.workout_id,
-      exercise_template_id: command.exercise_template_id,
+      exercise_id: command.exercise_id,
       repetitions: command.repetitions,
       weight: command.weight,
-      distance: command.distance,
-      duration: command.duration,
       set_order: setOrder,
+      completed: false, // New sets default to not completed
     })
-    .select("*, exercise_templates(name)")
+    .select("*, exercises(name)")
     .single();
 
   if (error || !set) {
@@ -498,7 +544,7 @@ export async function updateWorkoutSet(
 
   // Verify set belongs to workout
   const { data: existingSet, error: checkError } = await supabase
-    .from("workout_exercises")
+    .from("workout_sets")
     .select("workout_id")
     .eq("id", setId)
     .single();
@@ -526,19 +572,16 @@ export async function updateWorkoutSet(
   if (command.weight !== undefined) {
     updateData.weight = command.weight;
   }
-  if (command.distance !== undefined) {
-    updateData.distance = command.distance;
-  }
-  if (command.duration !== undefined) {
-    updateData.duration = command.duration;
+  if (command.completed !== undefined) {
+    updateData.completed = command.completed;
   }
 
   // Update set
   const { data: set, error } = await supabase
-    .from("workout_exercises")
+    .from("workout_sets")
     .update(updateData)
     .eq("id", setId)
-    .select("*, exercise_templates(name)")
+    .select("*, exercises(name)")
     .single();
 
   if (error || !set) {
