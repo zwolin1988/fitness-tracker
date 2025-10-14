@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+const { id } = Astro.params;
+---
+
+<Layout title="Szczegóły Planu" showNavigation>
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-4xl font-bold mb-4">Strona: Szczegóły Planu Treningowego</h1>
+
+    <div class="mb-6">
+      <p class="text-lg text-muted-foreground mb-2">
+        Ta strona będzie wyświetlać szczegółowe informacje o wybranym planie treningowym.
+      </p>
+      <p class="text-sm text-muted-foreground">
+        ID planu z URL: <code class="bg-muted px-2 py-1 rounded">{id}</code>
+      </p>
+    </div>
+
+    <div class="bg-card rounded-lg border p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
+      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+        <li>Wyświetlanie nazwy, opisu i dat utworzenia/aktualizacji planu</li>
+        <li>Statystyki: liczba ćwiczeń, łączna liczba serii, szacowany czas treningu</li>
+        <li>Lista ćwiczeń z podziałem na serie (tabela z powtórzeniami i ciężarem)</li>
+        <li>Przycisk "Rozpocznij trening z tego planu"</li>
+        <li>Opcje edycji i usunięcia planu</li>
+        <li>Wyświetlanie kategorii i poziomu trudności każdego ćwiczenia</li>
+      </ul>
+    </div>
+
+    <div class="bg-muted rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
+      <div class="space-y-2 font-mono text-sm">
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/plans/{'{id}'}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera szczegóły planu wraz z ćwiczeniami i seriami</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

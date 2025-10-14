@@ -1,5 +1,6 @@
 ---
 // Czysto statyczny komponent Astro - bez React
+const currentPath = Astro.url.pathname;
 ---
 
 <nav class="border-b bg-card">
@@ -9,28 +10,92 @@
         <a href="/" class="text-xl font-bold text-primary"> 💪 Fitness Tracker </a>
 
         <div class="hidden md:flex space-x-6">
-          <a href="/dashboard" class="text-sm font-medium hover:text-primary transition-colors"> Dashboard </a>
-          <a href="/workouts" class="text-sm font-medium hover:text-primary transition-colors"> Treningi </a>
-          <a href="/exercises" class="text-sm font-medium hover:text-primary transition-colors"> Ćwiczenia </a>
-          <a href="/goals" class="text-sm font-medium hover:text-primary transition-colors"> Cele </a>
-          <a href="/progress" class="text-sm font-medium hover:text-primary transition-colors"> Postępy </a>
+          <a
+            href="/dashboard"
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath === '/dashboard' ? 'text-primary' : ''}`}
+          >
+            Dashboard
+          </a>
+          <a
+            href="/workouts"
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/workouts') ? 'text-primary' : ''}`}
+          >
+            Treningi
+          </a>
+          <a
+            href="/plans"
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/plans') ? 'text-primary' : ''}`}
+          >
+            Plany
+          </a>
+          <a
+            href="/categories"
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/categories') ? 'text-primary' : ''}`}
+          >
+            Kategorie
+          </a>
         </div>
       </div>
 
       <div class="flex items-center space-x-4">
         <a
-          href="/login"
+          href="/profile"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        >
+          <span class="mr-2">👤</span> Profil
+        </a>
+        <a
+          href="/auth/login"
           class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
         >
           Zaloguj
         </a>
         <a
-          href="/register"
+          href="/auth/register"
           class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
         >
           Zarejestruj
         </a>
       </div>
     </div>
+
+    <!-- Mobile menu button -->
+    <div class="md:hidden">
+      <button
+        id="mobile-menu-button"
+        type="button"
+        class="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <span class="sr-only">Open main menu</span>
+        <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div class="hidden md:hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <a href="/dashboard" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Dashboard</a>
+      <a href="/workouts" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Treningi</a>
+      <a href="/plans" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Plany</a>
+      <a href="/categories" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Kategorie</a>
+      <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Profil</a>
+    </div>
   </div>
 </nav>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  mobileMenuButton?.addEventListener('click', () => {
+    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+    mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

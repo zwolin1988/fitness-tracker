@@ -1,69 +1,58 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from '@/layouts/Layout.astro';
 ---
 
-<Layout title="Fitness Tracker - Dashboard">
-  <div class="max-w-6xl mx-auto">
-    <h1 class="text-4xl font-bold text-center mb-8">Dashboard</h1>
+<Layout title="Dashboard" showNavigation>
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <h1 class="text-4xl font-bold mb-4">Strona: Dashboard</h1>
 
-    <!-- Statystyki -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-card text-card-foreground p-6 rounded-lg border">
-        <h3 class="text-lg font-semibold mb-2">Dzisiejsze treningi</h3>
-        <p class="text-3xl font-bold text-primary">0</p>
-      </div>
-      <div class="bg-card text-card-foreground p-6 rounded-lg border">
-        <h3 class="text-lg font-semibold mb-2">Cele osiągnięte</h3>
-        <p class="text-3xl font-bold text-green-600">0</p>
-      </div>
-      <div class="bg-card text-card-foreground p-6 rounded-lg border">
-        <h3 class="text-lg font-semibold mb-2">Aktywne cele</h3>
-        <p class="text-3xl font-bold text-blue-600">0</p>
-      </div>
-    </div>
-
-    <!-- Szybkie akcje -->
     <div class="mb-8">
-      <h2 class="text-2xl font-bold mb-4">Szybkie akcje</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <a
-          href="/workouts"
-          class="bg-primary text-primary-foreground p-4 rounded-lg hover:bg-primary/90 transition-colors text-center"
-        >
-          <div class="text-2xl mb-2">🏋️</div>
-          <div class="font-semibold">Treningi</div>
-        </a>
-        <a
-          href="/goals"
-          class="bg-secondary text-secondary-foreground p-4 rounded-lg hover:bg-secondary/90 transition-colors text-center"
-        >
-          <div class="text-2xl mb-2">🎯</div>
-          <div class="font-semibold">Cele</div>
-        </a>
-        <a
-          href="/progress"
-          class="bg-accent text-accent-foreground p-4 rounded-lg hover:bg-accent/90 transition-colors text-center"
-        >
-          <div class="text-2xl mb-2">📊</div>
-          <div class="font-semibold">Postępy</div>
-        </a>
-        <a
-          href="/auth/login"
-          class="border border-border bg-background p-4 rounded-lg hover:bg-accent transition-colors text-center"
-        >
-          <div class="text-2xl mb-2">👤</div>
-          <div class="font-semibold">Profil</div>
-        </a>
-      </div>
+      <p class="text-lg text-muted-foreground mb-4">
+        Ta strona będzie głównym panelem użytkownika z podsumowaniem aktywności treningowej.
+      </p>
     </div>
 
-    <!-- Ostatnie aktywności -->
-    <div>
-      <h2 class="text-2xl font-bold mb-4">Ostatnie aktywności</h2>
-      <div class="bg-card text-card-foreground p-6 rounded-lg border">
-        <p class="text-muted-foreground text-center py-8">
-          Brak ostatnich aktywności. Rozpocznij swój pierwszy trening!
-        </p>
+    <div class="bg-card rounded-lg border p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
+      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+        <li>Karty statystyk:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Treningi w tym tygodniu</li>
+          <li>Łączna objętość treningu</li>
+          <li>Liczba aktywnych planów</li>
+          <li>Czas treningowy w tym tygodniu</li>
+        </ul>
+        <li>Wykresy wizualizacji danych:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Objętość tygodniowa (słupkowy)</li>
+          <li>Maksymalny ciężar na sesję (liniowy)</li>
+          <li>Postęp w czasie</li>
+        </ul>
+        <li>Sekcja "Ostatnie treningi" (5 najnowszych)</li>
+        <li>Szybkie akcje:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Rozpocznij trening</li>
+          <li>Plany treningowe</li>
+          <li>Historia treningów</li>
+          <li>Profil</li>
+        </ul>
+        <li>Responsywny layout dostosowany do różnych urządzeń</li>
+      </ul>
+    </div>
+
+    <div class="bg-muted rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
+      <div class="space-y-2 font-mono text-sm">
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/workouts</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera dane treningów do statystyk i wykresów</p>
+        </div>
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/plans</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera liczbę aktywnych planów</p>
+        </div>
       </div>
     </div>
   </div>

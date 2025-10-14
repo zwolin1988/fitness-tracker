@@ -1,0 +1,59 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Trening w trakcie" showNavigation={false}>
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-4xl font-bold mb-4">Strona: Aktywny Trening</h1>
+
+    <div class="mb-8">
+      <p class="text-lg text-muted-foreground mb-4">
+        Ta strona będzie wyświetlać trening w trakcie z interaktywnymi elementami.
+      </p>
+    </div>
+
+    <div class="bg-card rounded-lg border p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
+      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+        <li>Timer pokazujący czas trwania treningu (odliczanie od startu)</li>
+        <li>Statystyki live:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Liczba wykonanych serii</li>
+          <li>Łączna objętość</li>
+          <li>Liczba wykonanych ćwiczeń</li>
+        </ul>
+        <li>Lista ćwiczeń z interaktywnymi seriami:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Checkboxy do zaznaczania wykonanych serii</li>
+          <li>Pola do edycji powtórzeń i ciężaru</li>
+          <li>Wizualne oznaczenie wykonanych serii</li>
+        </ul>
+        <li>Przycisk "Zakończ trening"</li>
+        <li>Potwierdzenie zakończenia z podsumowaniem</li>
+        <li>Automatyczny zapis zmian w seriach</li>
+        <li>Bez nawigacji górnej (focus na trening)</li>
+      </ul>
+    </div>
+
+    <div class="bg-muted rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
+      <div class="space-y-2 font-mono text-sm">
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/workouts/{'{id}'}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera aktualny stan treningu</p>
+        </div>
+        <div>
+          <span class="text-yellow-600 dark:text-yellow-400 font-bold">PATCH</span>
+          <span class="ml-2">/api/workouts/{'{id}'}/sets/{'{setId}'}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Aktualizuje status lub wartości serii</p>
+        </div>
+        <div>
+          <span class="text-blue-600 dark:text-blue-400 font-bold">POST</span>
+          <span class="ml-2">/api/workouts/{'{id}'}/end</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Kończy trening i ustawia end_time</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

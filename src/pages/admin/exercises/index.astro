@@ -1,0 +1,80 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+export const prerender = false;
+---
+
+<Layout title="Zarządzanie Ćwiczeniami - Admin" showNavigation>
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <h1 class="text-4xl font-bold mb-4">Strona: Panel Admina - Ćwiczenia</h1>
+
+    <div class="mb-8">
+      <p class="text-lg text-muted-foreground mb-4">
+        Ta strona będzie panelem administracyjnym do zarządzania ćwiczeniami (CRUD).
+      </p>
+    </div>
+
+    <div class="bg-card rounded-lg border p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
+      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+        <li>Filtry:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Filtr po kategorii</li>
+          <li>Filtr po poziomie trudności</li>
+          <li>Przycisk resetowania filtrów</li>
+        </ul>
+        <li>Tabela z listą wszystkich ćwiczeń</li>
+        <li>Kolumny tabeli:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Nazwa ćwiczenia (z ikoną jeśli dostępna)</li>
+          <li>Opis</li>
+          <li>Poziom trudności (badge)</li>
+          <li>Kategoria</li>
+          <li>Akcje (Edytuj / Usuń)</li>
+        </ul>
+        <li>Przycisk "Nowe Ćwiczenie"</li>
+        <li>Modal do tworzenia/edycji ćwiczenia:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Pole nazwy (wymagane)</li>
+          <li>Pole opisu (opcjonalne)</li>
+          <li>Wybór poziomu trudności (wymagane)</li>
+          <li>Wybór kategorii (wymagane)</li>
+          <li>Pole ikony SVG (opcjonalne)</li>
+        </ul>
+        <li>Modal potwierdzenia usunięcia z ostrzeżeniem o użyciu</li>
+        <li>Dostęp tylko dla administratorów</li>
+      </ul>
+    </div>
+
+    <div class="bg-muted rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
+      <div class="space-y-2 font-mono text-sm">
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/admin/exercises</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera wszystkie ćwiczenia z opcjonalnymi filtrami</p>
+        </div>
+        <div>
+          <span class="text-blue-600 dark:text-blue-400 font-bold">POST</span>
+          <span class="ml-2">/api/admin/exercises</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Tworzy nowe ćwiczenie</p>
+        </div>
+        <div>
+          <span class="text-yellow-600 dark:text-yellow-400 font-bold">PUT</span>
+          <span class="ml-2">/api/admin/exercises/{'{id}'}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Aktualizuje ćwiczenie</p>
+        </div>
+        <div>
+          <span class="text-red-600 dark:text-red-400 font-bold">DELETE</span>
+          <span class="ml-2">/api/admin/exercises/{'{id}'}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Usuwa ćwiczenie</p>
+        </div>
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/admin/categories</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera listę kategorii do filtrów i formularza</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
