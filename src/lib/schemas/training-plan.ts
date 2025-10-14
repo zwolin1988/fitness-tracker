@@ -13,10 +13,41 @@ export const TrainingPlanIdParamSchema = z.object({
 export type TrainingPlanIdParam = z.infer<typeof TrainingPlanIdParamSchema>;
 
 /**
+ * Schema for a single set within an exercise when creating a plan
+ */
+export const PlanExerciseSetInputSchema = z.object({
+  repetitions: z
+    .number()
+    .int("Repetitions must be an integer")
+    .positive("Repetitions must be greater than 0")
+    .max(999, "Repetitions must not exceed 999"),
+  weight: z
+    .number()
+    .nonnegative("Weight must be 0 or greater")
+    .max(999.99, "Weight must not exceed 999.99"),
+  set_order: z
+    .number()
+    .int("Set order must be an integer")
+    .nonnegative("Set order must be 0 or greater")
+    .optional(),
+});
+
+/**
+ * Schema for an exercise with optional sets when creating a plan
+ */
+export const PlanExerciseInputSchema = z.object({
+  exerciseId: z.string().uuid("Exercise ID must be a valid UUID"),
+  sets: z
+    .array(PlanExerciseSetInputSchema)
+    .max(50, "Maximum 50 sets per exercise")
+    .optional(),
+});
+
+/**
  * Schema for creating a new training plan (POST /api/plans)
  * - name: required, min 1 char, max 100 chars
  * - description: optional, max 1000 chars
- * - exerciseIds: required, array of UUIDs (exercises to include in plan)
+ * - exercises: required, array of exercises with optional sets
  */
 export const CreateTrainingPlanSchema = z.object({
   name: z
@@ -31,8 +62,8 @@ export const CreateTrainingPlanSchema = z.object({
     .optional()
     .nullable()
     .transform((val) => val || null),
-  exerciseIds: z
-    .array(z.string().uuid("Each exercise ID must be a valid UUID"))
+  exercises: z
+    .array(PlanExerciseInputSchema)
     .min(1, "At least one exercise is required")
     .max(50, "Maximum 50 exercises per plan"),
 });

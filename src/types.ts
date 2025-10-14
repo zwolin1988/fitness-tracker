@@ -95,12 +95,25 @@ export interface TrainingPlanDTO {
   updated_at: string;
 }
 
+// Set data when creating a plan
+export interface PlanExerciseSetInput {
+  repetitions: number;
+  weight: number;
+  set_order?: number;
+}
+
+// Exercise with optional sets when creating a plan
+export interface PlanExerciseInput {
+  exerciseId: string;
+  sets?: PlanExerciseSetInput[];
+}
+
 // Command to create a new training plan.
-// 'exerciseIds' is an array of exercise IDs to be associated with the plan.
+// 'exercises' is an array of exercises with optional sets.
 export interface CreateTrainingPlanCommand {
   name: string;
   description?: string;
-  exerciseIds: string[];
+  exercises: PlanExerciseInput[];
 }
 
 // Command to update an existing training plan.

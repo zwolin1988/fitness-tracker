@@ -149,6 +149,7 @@ export async function listTrainingPlans(
       .from("training_plans")
       .select("*")
       .eq("user_id", userId)
+      .is("deleted_at", null) // Only show non-deleted plans
       .order("created_at", { ascending: false });
 
     if (fetchError) {
@@ -239,7 +240,7 @@ export async function getTrainingPlanById(
 }
 
 /**
- * Creates a new training plan with associated exercises
+ * Creates a new training plan with associated exercises and optional sets
  * @param supabase - Supabase client instance
  * @param userId - User UUID
  * @param command - Training plan creation data
@@ -271,8 +272,9 @@ export async function createTrainingPlan(
       );
     }
 
-    // Validate that all exercises exist
-    await validateExercisesExist(supabase, command.exerciseIds);
+    // Extract and validate that all exercises exist
+    const exerciseIds = command.exercises.map((ex) => ex.exerciseId);
+    await validateExercisesExist(supabase, exerciseIds);
 
     // Insert training plan
     const { data: plan, error: insertError } = await supabase
@@ -291,9 +293,9 @@ export async function createTrainingPlan(
     }
 
     // Insert plan_exercises associations
-    const planExercisesData = command.exerciseIds.map((exerciseId, index) => ({
+    const planExercisesData = command.exercises.map((exercise, index) => ({
       training_plan_id: plan.id,
-      exercise_id: exerciseId,
+      exercise_id: exercise.exerciseId,
       order_index: index,
     }));
 
@@ -304,6 +306,41 @@ export async function createTrainingPlan(
       // Rollback: delete the plan
       await supabase.from("training_plans").delete().eq("id", plan.id);
       throw new TrainingPlanError("Failed to associate exercises with plan", 500, "INSERT_ERROR");
+    }
+
+    // Insert plan_exercise_sets if sets are provided
+    const allSetsData: {
+      training_plan_id: string;
+      exercise_id: string;
+      set_order: number;
+      repetitions: number;
+      weight: number;
+    }[] = [];
+
+    for (const exercise of command.exercises) {
+      if (exercise.sets && exercise.sets.length > 0) {
+        exercise.sets.forEach((set, index) => {
+          allSetsData.push({
+            training_plan_id: plan.id,
+            exercise_id: exercise.exerciseId,
+            set_order: set.set_order ?? index, // Use provided order or index
+            repetitions: set.repetitions,
+            weight: set.weight,
+          });
+        });
+      }
+    }
+
+    // Bulk insert all sets if any exist
+    if (allSetsData.length > 0) {
+      const { error: setsError } = await supabase.from("plan_exercise_sets").insert(allSetsData);
+
+      if (setsError) {
+        console.error("Error inserting plan exercise sets:", setsError);
+        // Rollback: delete the plan and exercises
+        await supabase.from("training_plans").delete().eq("id", plan.id);
+        throw new TrainingPlanError("Failed to create plan sets", 500, "INSERT_ERROR");
+      }
     }
 
     return plan;
@@ -389,7 +426,8 @@ export async function updateTrainingPlan(
 }
 
 /**
- * Deletes a training plan (CASCADE will delete associated exercises and sets)
+ * Soft deletes a training plan (sets deleted_at timestamp)
+ * Workouts that reference this plan remain intact
  * @param supabase - Supabase client instance
  * @param planId - Training plan UUID
  * @param userId - User UUID
@@ -404,11 +442,16 @@ export async function deleteTrainingPlan(
     // Check ownership
     await checkPlanOwnership(supabase, planId, userId);
 
-    // Delete training plan (CASCADE will handle plan_exercises and plan_exercise_sets)
-    const { error: deleteError } = await supabase.from("training_plans").delete().eq("id", planId);
+    // Soft delete: set deleted_at timestamp
+    const { error: deleteError } = await supabase
+      .from("training_plans")
+      .update({
+        deleted_at: new Date().toISOString(),
+      })
+      .eq("id", planId);
 
     if (deleteError) {
-      console.error("Error deleting training plan:", deleteError);
+      console.error("Error soft deleting training plan:", deleteError);
       throw new TrainingPlanError("Failed to delete training plan", 500, "DELETE_ERROR");
     }
   } catch (error) {

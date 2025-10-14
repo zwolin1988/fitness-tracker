@@ -111,9 +111,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 /**
  * POST /api/workouts
- * Creates a new workout session with auto-generated start_time
+ * Creates a new workout session based on a training plan
  * Requires: Authorization header with Bearer token
- * Body: { exerciseTemplateId: string (uuid) }
+ * Body: { planId: string (uuid) }
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {

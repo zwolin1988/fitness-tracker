@@ -78,17 +78,20 @@ Supabase Auth provides built-in methods:
 
 ### Training Plans
 - GET /plans
-  - Response: `200` list of plans
+  - Response: `200` list of plans (excludes soft-deleted)
 - POST /plans
-  - Payload: `{ name, description, exerciseIds[] }`
+  - Payload: `{ name, description, exercises: [{ exerciseId, sets?: [{ repetitions, weight, set_order? }] }] }`
   - Business: max 7 active plans
+  - Note: **Supports bulk create** - can include exercises with all sets in one request
   - Response: `201` new plan
 - GET /plans/{id}
-  - Response: `200` plan detail, sets
+  - Response: `200` plan detail with exercises and sets
 - PUT /plans/{id}
-  - Payload: `{ name, description, exerciseIds[] }`
+  - Payload: `{ name, description, exercises: [{ exerciseId, sets? }] }`
   - Response: `200` updated plan
 - DELETE /plans/{id}
+  - Note: **Soft delete** - sets `deleted_at` timestamp
+  - Workouts referencing this plan remain intact with full history
   - Response: `204`
 
 ### Plan Sets
@@ -145,7 +148,83 @@ Supabase Auth provides built-in methods:
 ## 4. Validation & Business Logic
 - **Profiles**: `weight>0`, `height>0`
 - **Sets**: `repetitions>0`, `weight>=0`
-- **Plans**: Enforce ≤7 active plans per user
+- **Plans**: Enforce ≤7 active plans per user (soft-deleted plans don't count)
 - **Pagination**: `limit` ≤100, `page` ≥1
 - **Error Handling**: 400/422 for validation, 401 for auth, 404 for missing
 - **Rate Limiting**: 100 req/min per user (middleware)
+
+## 5. Training Plan Creation - Two Approaches
+
+### Approach 1: Bulk Create (Recommended)
+Create a complete plan with exercises and all sets in a **single request**:
+
+```json
+POST /api/plans
+{
+  "name": "FBW A - Full Body Workout",
+  "description": "3x per week strength training",
+  "exercises": [
+    {
+      "exerciseId": "uuid-squat",
+      "sets": [
+        { "repetitions": 10, "weight": 50 },
+        { "repetitions": 10, "weight": 50 },
+        { "repetitions": 8, "weight": 55 }
+      ]
+    },
+    {
+      "exerciseId": "uuid-bench-press",
+      "sets": [
+        { "repetitions": 12, "weight": 30 },
+        { "repetitions": 10, "weight": 35 }
+      ]
+    }
+  ]
+}
+```
+
+**Benefits:**
+- ✅ Single HTTP request (faster)
+- ✅ Transactional consistency
+- ✅ Better UX (one loading state)
+- ✅ Automatic rollback on error
+
+### Approach 2: Incremental
+Create plan first, then add sets separately:
+
+```json
+// Step 1: Create plan
+POST /api/plans
+{
+  "name": "FBW B",
+  "exercises": [
+    { "exerciseId": "uuid-squat" },
+    { "exerciseId": "uuid-bench-press" }
+  ]
+}
+// Response: { id: "plan-uuid", ... }
+
+// Step 2: Add sets (multiple requests)
+POST /api/plans/plan-uuid/sets
+{ "exerciseId": "uuid-squat", "repetitions": 10, "weight": 50 }
+
+POST /api/plans/plan-uuid/sets
+{ "exerciseId": "uuid-squat", "repetitions": 10, "weight": 50 }
+// ... repeat for each set
+```
+
+**Use case:** When user wants to create plan structure first, then add sets later.
+
+## 6. Soft Delete Implementation
+
+### Training Plans
+- DELETE operation sets `deleted_at` timestamp instead of hard delete
+- Soft-deleted plans are excluded from GET /plans list (filtered by RLS)
+- Workouts maintain `training_plan_id` reference even after plan deletion
+- Full workout history is preserved
+
+**Why soft delete?**
+- Maintains referential integrity
+- Preserves workout history and statistics
+- Enables data analysis across deleted plans
+- Allows potential "restore" feature in future

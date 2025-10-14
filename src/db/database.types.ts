@@ -190,6 +190,7 @@ export interface Database {
       training_plans: {
         Row: {
           created_at: string;
+          deleted_at: string | null;
           description: string | null;
           id: string;
           name: string;
@@ -198,6 +199,7 @@ export interface Database {
         };
         Insert: {
           created_at?: string;
+          deleted_at?: string | null;
           description?: string | null;
           id?: string;
           name: string;
@@ -206,6 +208,7 @@ export interface Database {
         };
         Update: {
           created_at?: string;
+          deleted_at?: string | null;
           description?: string | null;
           id?: string;
           name?: string;
