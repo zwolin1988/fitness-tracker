@@ -1,0 +1,52 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Rozpocznij Trening" showNavigation>
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-4xl font-bold mb-4">Strona: Rozpocznij Trening</h1>
+
+    <div class="mb-8">
+      <p class="text-lg text-muted-foreground mb-4">
+        Ta strona będzie służyć do wyboru planu treningowego i rozpoczęcia nowej sesji.
+      </p>
+    </div>
+
+    <div class="bg-card rounded-lg border p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
+      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+        <li>Grid z dostępnymi planami treningowymi</li>
+        <li>Każdy kafelek planu pokazuje:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Nazwę i opis planu</li>
+          <li>Liczbę ćwiczeń i serii</li>
+          <li>Przycisk "Rozpocznij"</li>
+        </ul>
+        <li>Opcjonalny podgląd wybranego planu (jeśli planId w URL)</li>
+        <li>Po wyborze planu:</li>
+        <ul class="list-circle list-inside ml-6 space-y-1">
+          <li>Utworzenie nowego treningu przez API</li>
+          <li>Przekierowanie do strony aktywnego treningu</li>
+        </ul>
+        <li>Obsługa przypadku braku planów treningowych</li>
+        <li>Link do tworzenia nowego planu jeśli brak</li>
+      </ul>
+    </div>
+
+    <div class="bg-muted rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
+      <div class="space-y-2 font-mono text-sm">
+        <div>
+          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
+          <span class="ml-2">/api/plans</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera listę dostępnych planów treningowych</p>
+        </div>
+        <div>
+          <span class="text-blue-600 dark:text-blue-400 font-bold">POST</span>
+          <span class="ml-2">/api/workouts</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">Tworzy nowy trening na podstawie wybranego planu</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
