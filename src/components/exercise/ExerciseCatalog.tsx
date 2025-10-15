@@ -268,8 +268,7 @@ export function ExerciseCatalog({
       {selectedCount > 0 && (
         <div className="rounded-lg border border-primary/50 bg-primary/10 p-4 text-center">
           <p className="font-semibold text-primary">
-            Wybrano {selectedCount} {selectedCount === 1 ? "ćwiczenie" : selectedCount < 5 ? "ćwiczenia" : "ćwiczeń"}.
-            Gotowy do kontynuacji?
+            Wybrano {selectedCount} {selectedCount === 1 ? "ćwiczenie" : selectedCount < 5 ? "ćwiczenia" : "ćwiczeń"}
           </p>
         </div>
       )}
@@ -290,8 +289,8 @@ export function ExerciseCatalog({
               return (
                 <div
                   key={exercise.id}
-                  className={`group relative cursor-pointer rounded-lg border bg-card p-4 shadow-sm transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background ${
-                    isSelected ? "ring-2 ring-inset ring-primary" : ""
+                  className={`group relative cursor-pointer rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-lg ${
+                    isSelected ? "ring-3 ring-inset ring-primary" : ""
                   }`}
                   onClick={() => handleExerciseClick(exercise.id)}
                   role="checkbox"
@@ -308,10 +307,10 @@ export function ExerciseCatalog({
                     {/* Icon */}
                     <div
                       className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg ${
-                        isSelected ? "bg-primary/10" : "bg-muted"
+                        isSelected ? "bg-primary/20" : "bg-muted"
                       }`}
                     >
-                      <span className={`text-2xl ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                      <span className={`text-xl ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
                         {categoryName.toLowerCase() === "nogi" && "🏋️"}
                         {categoryName.toLowerCase() === "klatka piersiowa" && "💪"}
                         {categoryName.toLowerCase() === "plecy" && "🦾"}
