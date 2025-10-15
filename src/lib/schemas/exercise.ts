@@ -11,15 +11,27 @@ import { z } from "zod";
  * - limit: must be between 1 and 100 (default: 20)
  */
 export const ListExercisesQuerySchema = z.object({
-  categoryId: z.string().uuid("Category ID must be a valid UUID").optional(),
-  difficulty: z.string().min(1, "Difficulty cannot be empty").optional(),
+  categoryId: z
+    .string()
+    .uuid("Category ID must be a valid UUID")
+    .nullable()
+    .optional()
+    .transform((val) => val || undefined),
+  difficulty: z
+    .string()
+    .min(1, "Difficulty cannot be empty")
+    .nullable()
+    .optional()
+    .transform((val) => val || undefined),
   page: z
     .string()
+    .nullable()
     .optional()
     .transform((val) => (val ? parseInt(val, 10) : 1))
     .pipe(z.number().int().min(1, "Page must be at least 1")),
   limit: z
     .string()
+    .nullable()
     .optional()
     .transform((val) => (val ? parseInt(val, 10) : 20))
     .pipe(z.number().int().min(1).max(100, "Limit must not exceed 100")),

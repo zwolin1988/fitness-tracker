@@ -1,44 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { PlansList } from "@/components/training-plan/PlansList";
+import { Toaster } from "@/components/ui/sonner";
 ---
 
 <Layout title="Plany Treningowe" showNavigation>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-4xl font-bold mb-4">Strona: Lista Planów Treningowych</h1>
-
-    <div class="mb-8">
-      <p class="text-lg text-muted-foreground mb-4">
-        Ta strona będzie wyświetlać grid z planami treningowymi użytkownika (maksymalnie 7 aktywnych).
-      </p>
-    </div>
-
-    <div class="bg-card rounded-lg border p-6 mb-6">
-      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
-      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
-        <li>Wyświetlanie listy planów treningowych w układzie kafelków (grid)</li>
-        <li>Każdy kafelek pokazuje nazwę planu, opis, liczbę ćwiczeń i serii</li>
-        <li>Limit 7 aktywnych planów na użytkownika</li>
-        <li>Przycisk "Nowy plan" do tworzenia nowego planu</li>
-        <li>Opcje edycji i usuwania planu</li>
-        <li>Link do szczegółów planu</li>
-        <li>Ostrzeżenie przy osiągnięciu limitu planów</li>
-      </ul>
-    </div>
-
-    <div class="bg-muted rounded-lg p-6">
-      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
-      <div class="space-y-2 font-mono text-sm">
-        <div>
-          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/plans</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera listę planów treningowych użytkownika</p>
-        </div>
-        <div>
-          <span class="text-red-600 dark:text-red-400 font-bold">DELETE</span>
-          <span class="ml-2">/api/plans/{"{id}"}</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Usuwa plan treningowy (soft delete)</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <PlansList client:load />
+  <Toaster client:load />
 </Layout>
