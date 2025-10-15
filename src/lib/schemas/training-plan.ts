@@ -21,15 +21,8 @@ export const PlanExerciseSetInputSchema = z.object({
     .int("Repetitions must be an integer")
     .positive("Repetitions must be greater than 0")
     .max(999, "Repetitions must not exceed 999"),
-  weight: z
-    .number()
-    .nonnegative("Weight must be 0 or greater")
-    .max(999.99, "Weight must not exceed 999.99"),
-  set_order: z
-    .number()
-    .int("Set order must be an integer")
-    .nonnegative("Set order must be 0 or greater")
-    .optional(),
+  weight: z.number().nonnegative("Weight must be 0 or greater").max(999.99, "Weight must not exceed 999.99"),
+  set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),
 });
 
 /**
@@ -37,10 +30,7 @@ export const PlanExerciseSetInputSchema = z.object({
  */
 export const PlanExerciseInputSchema = z.object({
   exerciseId: z.string().uuid("Exercise ID must be a valid UUID"),
-  sets: z
-    .array(PlanExerciseSetInputSchema)
-    .max(50, "Maximum 50 sets per exercise")
-    .optional(),
+  sets: z.array(PlanExerciseSetInputSchema).max(50, "Maximum 50 sets per exercise").optional(),
 });
 
 /**
@@ -136,15 +126,8 @@ export const CreatePlanSetSchema = z.object({
     .int("Repetitions must be an integer")
     .positive("Repetitions must be greater than 0")
     .max(999, "Repetitions must not exceed 999"),
-  weight: z
-    .number()
-    .nonnegative("Weight must be 0 or greater")
-    .max(999.99, "Weight must not exceed 999.99"),
-  set_order: z
-    .number()
-    .int("Set order must be an integer")
-    .nonnegative("Set order must be 0 or greater")
-    .optional(),
+  weight: z.number().nonnegative("Weight must be 0 or greater").max(999.99, "Weight must not exceed 999.99"),
+  set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),
 });
 
 export type CreatePlanSetBody = z.infer<typeof CreatePlanSetSchema>;
@@ -166,11 +149,7 @@ export const UpdatePlanSetSchema = z
       .nonnegative("Weight must be 0 or greater")
       .max(999.99, "Weight must not exceed 999.99")
       .optional(),
-    set_order: z
-      .number()
-      .int("Set order must be an integer")
-      .nonnegative("Set order must be 0 or greater")
-      .optional(),
+    set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",

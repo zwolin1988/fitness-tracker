@@ -1,37 +1,20 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
+import CategoriesGrid from "@/components/categories/CategoriesGrid";
+
+// TODO: Get user role from auth context/session when authentication is implemented
+const userRole = "admin"; // Will be retrieved from Supabase session in the future
 ---
 
-<Layout title="Kategorie Ćwiczeń" showNav>
+<Layout title="Kategorie Ćwiczeń - Fitness Tracker" showNavigation>
   <div class="container mx-auto px-4 py-8">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold mb-2">Strona: Lista Kategorii Ćwiczeń</h1>
-      <p class="text-muted-foreground">
-        Tutaj będzie grid z kategoriami ćwiczeń (Klatka, Plecy, Nogi, itp.)
-      </p>
-    </div>
+    <!-- Page Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold mb-2">Kategorie Ćwiczeń</h1>
+      <p class="text-muted-foreground">Wybierz kategorię aby zobaczyć listę ćwiczeń</p>
+    </header>
 
-    <div class="bg-card rounded-lg border p-8 text-center">
-      <p class="text-6xl mb-4">📋</p>
-      <p class="text-xl mb-4">Lista kategorii</p>
-      <p class="text-muted-foreground">
-        Kategorie zostaną załadowane po integracji z API
-      </p>
-
-      <div class="mt-8 text-sm text-muted-foreground text-left max-w-md mx-auto">
-        <p class="font-semibold mb-2">Planowane funkcje:</p>
-        <ul class="list-disc list-inside space-y-1">
-          <li>Grid z kartami kategorii (3 kolumny)</li>
-          <li>Obrazek/ikona dla każdej kategorii</li>
-          <li>Nazwa i krótki opis</li>
-          <li>Link do listy ćwiczeń w kategorii</li>
-          <li>Paginacja</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="mt-4 text-sm text-muted-foreground">
-      <p><strong>Endpoint API:</strong> GET /api/categories</p>
-    </div>
+    <!-- Main Content: React Grid Component -->
+    <CategoriesGrid client:load userRole={userRole} />
   </div>
 </Layout>

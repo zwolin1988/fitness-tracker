@@ -60,16 +60,8 @@ const MAX_PLANS_PER_USER = 7;
  * @returns true if plan belongs to user, false otherwise
  * @throws TrainingPlanError if plan not found or check fails
  */
-async function checkPlanOwnership(
-  supabase: TypedSupabaseClient,
-  planId: string,
-  userId: string
-): Promise<boolean> {
-  const { data: plan, error } = await supabase
-    .from("training_plans")
-    .select("user_id")
-    .eq("id", planId)
-    .maybeSingle();
+async function checkPlanOwnership(supabase: TypedSupabaseClient, planId: string, userId: string): Promise<boolean> {
+  const { data: plan, error } = await supabase.from("training_plans").select("user_id").eq("id", planId).maybeSingle();
 
   if (error) {
     console.error("Error checking plan ownership:", error);
@@ -433,11 +425,7 @@ export async function updateTrainingPlan(
  * @param userId - User UUID
  * @throws TrainingPlanError if plan not found or access denied
  */
-export async function deleteTrainingPlan(
-  supabase: TypedSupabaseClient,
-  planId: string,
-  userId: string
-): Promise<void> {
+export async function deleteTrainingPlan(supabase: TypedSupabaseClient, planId: string, userId: string): Promise<void> {
   try {
     // Check ownership
     await checkPlanOwnership(supabase, planId, userId);

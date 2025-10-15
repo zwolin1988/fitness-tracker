@@ -109,19 +109,12 @@ export const UpdateWorkoutSetSchema = z
       .max(999.99, { message: "Weight cannot exceed 999.99 kg" })
       .optional()
       .describe("Weight used in kg"),
-    completed: z
-      .boolean()
-      .optional()
-      .describe("Whether this set has been completed by the user"),
+    completed: z.boolean().optional().describe("Whether this set has been completed by the user"),
   })
   .refine(
     (data) => {
       // At least one field must be provided for PATCH
-      return (
-        data.repetitions !== undefined ||
-        data.weight !== undefined ||
-        data.completed !== undefined
-      );
+      return data.repetitions !== undefined || data.weight !== undefined || data.completed !== undefined;
     },
     {
       message: "At least one field must be provided for update",
