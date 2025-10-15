@@ -1,5 +1,5 @@
-// src/pages/api/plans/index.ts
-// API endpoints for listing and creating training plans
+// src/pages/api/plans.ts
+// API endpoint for listing and creating training plans
 
 import type { APIRoute } from "astro";
 
@@ -11,7 +11,7 @@ export const prerender = false;
 
 /**
  * GET /api/plans
- * Returns list of training plans for the authenticated user
+ * Returns a list of training plans for the authenticated user
  * Requires: Authorization header with Bearer token
  */
 export const GET: APIRoute = async ({ locals }) => {
@@ -44,7 +44,7 @@ export const GET: APIRoute = async ({ locals }) => {
       );
     }
 
-    // Fetch training plans list
+    // Fetch user's training plans
     const result = await listTrainingPlans(supabase, user.id);
 
     return new Response(JSON.stringify(result), {
@@ -82,9 +82,10 @@ export const GET: APIRoute = async ({ locals }) => {
 
 /**
  * POST /api/plans
- * Creates a new training plan with exercises and optional sets
+ * Creates a new training plan for the authenticated user
  * Requires: Authorization header with Bearer token
- * Body: { name, description?, exercises: [{ exerciseId, sets?: [...] }] }
+ * Body: { name, description?, exerciseIds }
+ * Business rule: Max 7 training plans per user
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -120,7 +121,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let body;
     try {
       body = await request.json();
-    } catch {
+    } catch (parseError) {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",
@@ -142,13 +143,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
           details: validationResult.error.flatten().fieldErrors,
         }),
         {
-          status: 422,
+          status: 400,
           headers: { "Content-Type": "application/json" },
         }
       );
     }
 
-    // Create training plan (bulk create with exercises and sets)
+    // Create training plan
     const newPlan = await createTrainingPlan(supabase, user.id, validationResult.data);
 
     return new Response(JSON.stringify(newPlan), {

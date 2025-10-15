@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const DIFFICULTY_MAP = {
-  "łatwe": 1,
-  "średnie": 2,
-  "trudne": 3,
+  łatwe: 1,
+  średnie: 2,
+  trudne: 3,
 };
 
 const DIFFICULTY_OPTIONS = [
@@ -29,14 +29,14 @@ const DIFFICULTY_OPTIONS = [
 ];
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
-  "nogi": { bg: "bg-blue-100 dark:bg-blue-900/50", text: "text-blue-800 dark:text-blue-300" },
+  nogi: { bg: "bg-blue-100 dark:bg-blue-900/50", text: "text-blue-800 dark:text-blue-300" },
   "klatka piersiowa": { bg: "bg-red-100 dark:bg-red-900/50", text: "text-red-800 dark:text-red-300" },
-  "plecy": { bg: "bg-yellow-100 dark:bg-yellow-900/50", text: "text-yellow-800 dark:text-yellow-300" },
-  "brzuch": { bg: "bg-green-100 dark:bg-green-900/50", text: "text-green-800 dark:text-green-300" },
-  "ramiona": { bg: "bg-purple-100 dark:bg-purple-900/50", text: "text-purple-800 dark:text-purple-300" },
-  "biceps": { bg: "bg-indigo-100 dark:bg-indigo-900/50", text: "text-indigo-800 dark:text-indigo-300" },
-  "triceps": { bg: "bg-pink-100 dark:bg-pink-900/50", text: "text-pink-800 dark:text-pink-300" },
-  "cardio": { bg: "bg-orange-100 dark:bg-orange-900/50", text: "text-orange-800 dark:text-orange-300" },
+  plecy: { bg: "bg-yellow-100 dark:bg-yellow-900/50", text: "text-yellow-800 dark:text-yellow-300" },
+  brzuch: { bg: "bg-green-100 dark:bg-green-900/50", text: "text-green-800 dark:text-green-300" },
+  ramiona: { bg: "bg-purple-100 dark:bg-purple-900/50", text: "text-purple-800 dark:text-purple-300" },
+  biceps: { bg: "bg-indigo-100 dark:bg-indigo-900/50", text: "text-indigo-800 dark:text-indigo-300" },
+  triceps: { bg: "bg-pink-100 dark:bg-pink-900/50", text: "text-pink-800 dark:text-pink-300" },
+  cardio: { bg: "bg-orange-100 dark:bg-orange-900/50", text: "text-orange-800 dark:text-orange-300" },
 };
 
 /**
@@ -268,7 +268,8 @@ export function ExerciseCatalog({
       {selectedCount > 0 && (
         <div className="rounded-lg border border-primary/50 bg-primary/10 p-4 text-center">
           <p className="font-semibold text-primary">
-            Wybrano {selectedCount} {selectedCount === 1 ? "ćwiczenie" : selectedCount < 5 ? "ćwiczenia" : "ćwiczeń"}. Gotowy do kontynuacji?
+            Wybrano {selectedCount} {selectedCount === 1 ? "ćwiczenie" : selectedCount < 5 ? "ćwiczenia" : "ćwiczeń"}.
+            Gotowy do kontynuacji?
           </p>
         </div>
       )}
@@ -319,7 +320,16 @@ export function ExerciseCatalog({
                         {categoryName.toLowerCase() === "biceps" && "💪"}
                         {categoryName.toLowerCase() === "triceps" && "💪"}
                         {categoryName.toLowerCase() === "cardio" && "🏃"}
-                        {!["nogi", "klatka piersiowa", "plecy", "brzuch", "ramiona", "biceps", "triceps", "cardio"].includes(categoryName.toLowerCase()) && "💪"}
+                        {![
+                          "nogi",
+                          "klatka piersiowa",
+                          "plecy",
+                          "brzuch",
+                          "ramiona",
+                          "biceps",
+                          "triceps",
+                          "cardio",
+                        ].includes(categoryName.toLowerCase()) && "💪"}
                       </span>
                     </div>
 

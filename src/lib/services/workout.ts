@@ -169,7 +169,7 @@ async function getNextSetOrder(supabase: TypedSupabaseClient, workoutId: string)
 /**
  * Calculates workout summary statistics
  */
-function calculateWorkoutSummary(workout: any): {
+function calculateWorkoutSummary(workout: unknown): {
   duration: number | null;
   totalSets: number;
   estimatedCalories: number | null;
@@ -189,7 +189,7 @@ function calculateWorkoutSummary(workout: any): {
 /**
  * Maps database workout to DTO
  */
-function mapWorkoutToDTO(workout: any): WorkoutDTO {
+function mapWorkoutToDTO(workout: unknown): WorkoutDTO {
   const { duration, totalSets, estimatedCalories } = calculateWorkoutSummary(workout);
 
   return {
@@ -209,7 +209,7 @@ function mapWorkoutToDTO(workout: any): WorkoutDTO {
 /**
  * Maps database workout set to DTO
  */
-function mapWorkoutSetToDTO(set: any): WorkoutSetDTO {
+function mapWorkoutSetToDTO(set: unknown): WorkoutSetDTO {
   return {
     id: set.id,
     workoutId: set.workout_id,
@@ -368,7 +368,9 @@ export async function getWorkoutById(
   }
 
   // Map sets with exercise names
-  const sets = (workout.workout_sets || []).sort((a: any, b: any) => a.set_order - b.set_order).map(mapWorkoutSetToDTO);
+  const sets = (workout.workout_sets || [])
+    .sort((a: unknown, b: unknown) => a.set_order - b.set_order)
+    .map(mapWorkoutSetToDTO);
 
   return {
     ...mapWorkoutToDTO(workout),
@@ -415,7 +417,7 @@ export async function endWorkout(
   }
 
   const sets = (workout.workout_exercises || [])
-    .sort((a: any, b: any) => a.set_order - b.set_order)
+    .sort((a: unknown, b: unknown) => a.set_order - b.set_order)
     .map(mapWorkoutSetToDTO);
 
   return {
@@ -512,7 +514,7 @@ export async function updateWorkoutSet(
   }
 
   // Build update object with only provided fields
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };
 

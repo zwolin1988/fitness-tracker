@@ -104,12 +104,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
             className="h-10 bg-white border-gray-300"
           />
         </div>
-        <Button
-          type="button"
-          variant="default"
-          size="default"
-          onClick={handleAddSet}
-        >
+        <Button type="button" variant="default" size="default" onClick={handleAddSet}>
           Dodaj
         </Button>
       </div>
@@ -133,7 +128,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                     type="number"
                     min={1}
                     max={999}
-                    value={set.repetitions || ''}
+                    value={set.repetitions || ""}
                     onChange={(e) => {
                       const updatedSets = [...sets];
                       updatedSets[index] = {
@@ -144,13 +139,15 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                     }}
                     className={`h-9 w-full rounded border p-2 text-sm ${
                       hasRepetitionsError
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-primary/20 dark:border-primary/30 focus:border-primary focus:ring-primary'
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        : "border-primary/20 dark:border-primary/30 focus:border-primary focus:ring-primary"
                     } bg-background text-foreground`}
                   />
                   {hasRepetitionsError && (
                     <p className="mt-1 text-xs text-red-500">
-                      {set.repetitions === 0 || !set.repetitions ? 'To pole jest wymagane.' : 'Wartość musi być między 1 a 999.'}
+                      {set.repetitions === 0 || !set.repetitions
+                        ? "To pole jest wymagane."
+                        : "Wartość musi być między 1 a 999."}
                     </p>
                   )}
                 </div>
@@ -161,7 +158,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                     min={0}
                     max={999.99}
                     step={2.5}
-                    value={set.weight || ''}
+                    value={set.weight || ""}
                     onChange={(e) => {
                       const updatedSets = [...sets];
                       updatedSets[index] = {
@@ -172,13 +169,13 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                     }}
                     className={`h-9 w-full rounded border p-2 text-sm ${
                       hasWeightError
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-primary/20 dark:border-primary/30 focus:border-primary focus:ring-primary'
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        : "border-primary/20 dark:border-primary/30 focus:border-primary focus:ring-primary"
                     } bg-background text-foreground`}
                   />
                   {hasWeightError && (
                     <p className="mt-1 text-xs text-red-500">
-                      {set.weight < 0 ? 'Wartość musi być większa lub równa 0.' : 'Wartość musi być między 0 a 999.99.'}
+                      {set.weight < 0 ? "Wartość musi być większa lub równa 0." : "Wartość musi być między 0 a 999.99."}
                     </p>
                   )}
                 </div>

@@ -68,7 +68,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     let body;
     try {
       body = await request.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",
@@ -106,7 +106,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     };
 
     // Create plan set
-    const newSet = await createPlanSet(supabase, planId, user.id, command as any);
+    const newSet = await createPlanSet(supabase, planId, user.id, command);
 
     return new Response(JSON.stringify(newSet), {
       status: 201,

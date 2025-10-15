@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ExerciseSetConfigAccordion } from "./ExerciseSetConfigAccordion";
 import type { ExerciseSetConfig, ExerciseSetConfiguratorProps, ExerciseWithSets, SetFormData } from "./types";
@@ -120,47 +120,15 @@ export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigur
   };
 
   /**
-   * Walidacja - czy wszystkie ćwiczenia mają co najmniej 1 poprawny set
+   * Wywołaj onSetsConfigured przy każdej zmianie
    */
-  const isValid = useMemo(() => {
-    return exercisesWithSets.every((item) => {
-      // Każde ćwiczenie musi mieć co najmniej 1 set
-      if (item.sets.length === 0) return false;
-
-      // Każdy set musi być poprawnie wypełniony
-      return item.sets.every((set) => {
-        return set.repetitions >= 1 && set.repetitions <= 999 && set.weight >= 0 && set.weight <= 999.99;
-      });
-    });
-  }, [exercisesWithSets]);
-
-  /**
-   * Statystyki
-   */
-  const stats = useMemo(() => {
-    const totalExercises = exercisesWithSets.length;
-    const totalSets = exercisesWithSets.reduce((sum, item) => sum + item.sets.length, 0);
-
-    return { totalExercises, totalSets };
-  }, [exercisesWithSets]);
-
-  /**
-   * Konwersja do ExerciseSetConfig[] dla parenta
-   */
-  const getConfig = (): ExerciseSetConfig[] => {
-    return exercisesWithSets.map((item) => ({
+  useEffect(() => {
+    const config: ExerciseSetConfig[] = exercisesWithSets.map((item) => ({
       exerciseId: item.exercise.id,
       sets: item.sets,
     }));
-  };
-
-  /**
-   * Wywołaj onSetsConfigured przy każdej zmianie
-   */
-  useMemo(() => {
-    onSetsConfigured(getConfig());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercisesWithSets]);
+    onSetsConfigured(config);
+  }, [exercisesWithSets, onSetsConfigured]);
 
   return (
     <div className="space-y-3">

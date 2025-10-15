@@ -17,7 +17,6 @@ import { DraftRecoveryBanner } from "./DraftRecoveryBanner";
 import { ExerciseSelector } from "./ExerciseSelector";
 import { ExerciseSetConfigurator } from "./ExerciseSetConfigurator";
 import { PlanBasicsForm } from "./PlanBasicsForm";
-import { StepIndicator } from "./StepIndicator";
 import type { ExerciseSetConfig, PlanBasicsFormData, PlanDraft, PlanWizardProps } from "./types";
 
 /**
@@ -68,7 +67,7 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
           const categoriesData = await categoriesResponse.json();
           setCategories(categoriesData.items || []);
         }
-      } catch (err) {
+      } catch {
         toast.error("Nie udało się pobrać danych");
       } finally {
         setIsLoadingExercises(false);
@@ -235,14 +234,13 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
         <DraftRecoveryBanner draft={draft} onRestore={handleRestoreDraft} onDiscard={handleDiscardDraft} />
       )}
 
-      <main className={`mx-auto w-full flex-grow px-4 py-6 sm:px-6 ${state.currentStep === 1 ? "max-w-2xl" : "max-w-4xl lg:px-8"}`}>
+      <main
+        className={`mx-auto w-full flex-grow px-4 py-6 sm:px-6 ${state.currentStep === 1 ? "max-w-2xl" : "max-w-4xl lg:px-8"}`}
+      >
         <div className="flex flex-col gap-8">
-
           {/* Step Indicator */}
           <div>
-            <p className="text-sm font-medium text-muted-foreground mb-2">
-              Krok {state.currentStep} z 3
-            </p>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Krok {state.currentStep} z 3</p>
             <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-300"
@@ -254,7 +252,11 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
           {/* Header */}
           <div className="space-y-1">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              {state.currentStep === 3 ? "Konfiguracja Serii" : mode === "create" ? "Utwórz Plan Treningowy" : "Edytuj Plan Treningowy"}
+              {state.currentStep === 3
+                ? "Konfiguracja Serii"
+                : mode === "create"
+                  ? "Utwórz Plan Treningowy"
+                  : "Edytuj Plan Treningowy"}
             </h2>
             {state.currentStep !== 3 && (
               <p className="text-base text-muted-foreground">
@@ -299,22 +301,11 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
       {state.currentStep !== 1 && (
         <footer className="sticky bottom-0 mt-auto border-t border-border bg-background py-4">
           <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <Button
-              type="button"
-              variant="secondary"
-              size="lg"
-              onClick={prevStep}
-            >
+            <Button type="button" variant="secondary" size="lg" onClick={prevStep}>
               Wstecz
             </Button>
             {state.currentStep === 2 && (
-              <Button
-                type="button"
-                variant="default"
-                size="lg"
-                onClick={nextStep}
-                disabled={!canProceedToNextStep()}
-              >
+              <Button type="button" variant="default" size="lg" onClick={nextStep} disabled={!canProceedToNextStep()}>
                 Dalej
               </Button>
             )}

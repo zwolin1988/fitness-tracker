@@ -120,7 +120,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
     let body;
     try {
       body = await request.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",

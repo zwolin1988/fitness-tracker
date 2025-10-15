@@ -216,8 +216,8 @@ export async function getTrainingPlanById(
 
     // Map exercises
     const exercises: ExerciseDTO[] = (planExercises || [])
-      .map((pe: any) => pe.exercises)
-      .filter((ex: any) => ex !== null);
+      .map((pe: unknown) => pe.exercises)
+      .filter((ex: unknown) => ex !== null);
 
     return {
       ...plan,

@@ -38,7 +38,7 @@ export function PlansList() {
 
       const data: PlansListResponse = await response.json();
       setPlans(data.items || []);
-    } catch (err) {
+    } catch {
       toast.error("Nie udało się pobrać listy planów");
     } finally {
       setIsLoading(false);
@@ -106,7 +106,9 @@ export function PlansList() {
           {plans.map((plan) => (
             <div key={plan.id} className="rounded-lg border bg-card p-6 hover:border-primary transition-colors">
               <h3 className="font-semibold text-lg mb-2">{plan.name}</h3>
-              {plan.description && <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{plan.description}</p>}
+              {plan.description && (
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{plan.description}</p>
+              )}
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>Utworzono: {new Date(plan.created_at).toLocaleDateString("pl-PL")}</span>
               </div>

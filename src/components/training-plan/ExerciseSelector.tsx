@@ -1,11 +1,7 @@
 // src/components/training-plan/ExerciseSelector.tsx
 // Komponent wyboru ćwiczeń z katalogu (krok 2)
 
-import { useCallback } from "react";
-
 import { ExerciseCatalog } from "@/components/exercise/ExerciseCatalog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 import type { ExerciseSelectorProps } from "./types";
 

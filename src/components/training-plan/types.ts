@@ -188,7 +188,7 @@ export interface ExerciseSetConfigAccordionProps {
   isExpanded: boolean;
   onToggle: () => void;
   onSetsChange: (sets: SetFormData[]) => void;
-  dragHandleProps?: any; // listeners z useSortable
+  dragHandleProps?: Record<string, unknown>; // listeners z useSortable
 }
 
 /**

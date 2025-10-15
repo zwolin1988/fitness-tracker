@@ -28,7 +28,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     // Verify admin role
-    const { isAdmin, userId, error: authError } = await verifyAdminRole(supabase);
+    const { isAdmin, error: authError } = await verifyAdminRole(supabase);
 
     if (!isAdmin) {
       return new Response(
@@ -65,7 +65,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     let body;
     try {
       body = await request.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",
@@ -147,7 +147,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // Verify admin role
-    const { isAdmin, userId, error: authError } = await verifyAdminRole(supabase);
+    const { isAdmin, error: authError } = await verifyAdminRole(supabase);
 
     if (!isAdmin) {
       return new Response(

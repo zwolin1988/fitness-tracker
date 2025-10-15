@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { useState } from "react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { PlanWizard } from "./PlanWizard";
 import type { PlanWizardDialogProps } from "./types";

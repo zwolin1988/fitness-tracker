@@ -13,13 +13,15 @@ const buttonVariants = cva(
         default: "bg-primary text-white hover:bg-primary/90 disabled:opacity-50",
 
         // Secondary - jasnoniebieski przycisk (Wstecz, Anuluj)
-        secondary: "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30",
+        secondary:
+          "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30",
 
         // Destructive - czerwony dla usuwania
         destructive: "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20",
 
         // Outline - ramka
-        outline: "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        outline:
+          "border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
 
         // Ghost - przezroczysty
         ghost: "hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20",

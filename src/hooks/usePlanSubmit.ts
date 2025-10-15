@@ -118,8 +118,8 @@ export function usePlanSubmit(): UsePlanSubmitReturn {
 
       const plan = await response.json();
       return plan as TrainingPlanDTO;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Nieznany błąd";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Nieznany błąd";
       setError(errorMessage);
       return null;
     } finally {

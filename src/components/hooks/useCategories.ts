@@ -94,11 +94,11 @@ export function useCategories({ initialPage = 1, limit = 20 }: UseCategoriesPara
           isLoading: false,
           error: null,
         });
-      } catch (err) {
+      } catch (error) {
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: err instanceof Error ? err : new Error("Unknown error"),
+          error: error instanceof Error ? error : new Error("Unknown error"),
         }));
       }
     },
