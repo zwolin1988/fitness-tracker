@@ -4,7 +4,6 @@
 import { GripVertical } from "lucide-react";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 
 import { SetFormList } from "./SetFormList";
 import type { ExerciseSetConfigAccordionProps } from "./types";
@@ -20,15 +19,9 @@ export function ExerciseSetConfigAccordion({
   onSetsChange,
   dragHandleProps,
 }: ExerciseSetConfigAccordionProps) {
-  const setsCount = sets.length;
-  const hasNoSets = setsCount === 0;
-
   return (
     <Accordion type="single" collapsible value={isExpanded ? exercise.id : ""} onValueChange={onToggle}>
-      <AccordionItem
-        value={exercise.id}
-        className="rounded-lg border border-blue-200 bg-blue-100"
-      >
+      <AccordionItem value={exercise.id} className="rounded-lg border border-blue-200 bg-blue-100">
         <div className="flex items-center gap-3 px-4">
           {/* Drag Handle */}
           <button

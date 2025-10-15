@@ -64,7 +64,8 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:  
   - formularz edycji profilu zapisuje zmiany w tabeli profiles  
   - walidacja pól: waga i wzrost muszą być > 0  
-  - profil odczytywany po każdym logowaniu  
+  - profil odczytywany po każdym logowaniu
+  - Funkcjonalność edycja profilu nie jest dostępna bez logowania się do systemu (US-001).  
 
 - ID: US-003
   Tytuł: przegląd kategorii ćwiczeń
@@ -86,6 +87,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - limit 7 aktywnych planów; próba utworzenia 8. planu pokazuje komunikat o limicie
   - wybór ćwiczeń z bazy zapisuje rekordy w plan_exercises
+  - Funkcjonalność tworzenie planu treningowego nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-006
   Tytuł: definiowanie serii w planie
@@ -93,6 +95,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - walidacja powtórzeń > 0, ciężar >= 0
   - rekordy zapisane w plan_exercise_sets
+  - Funkcjonalność definiowanie serii w planie nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-007
   Tytuł: rozpoczęcie treningu
@@ -100,6 +103,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - nowy rekord w workouts ze znacznikiem startu
   - UI zmienia się na tryb treningu z listą ćwiczeń i serii
+  - Funkcjonalność rozpoczęcie treningu nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-008
   Tytuł: modyfikacja parametrów serii
@@ -107,6 +111,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - zmiana zapisywana w czasie rzeczywistym w workout_sets
   - walidacja zmian analogiczna do planu
+  - Funkcjonalność modyfikacja parametrów serii nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-009
   Tytuł: oznaczenie wykonanej serii
@@ -114,6 +119,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - zmiana statusu w workout_sets
   - wizualne odznaczenie ukończonej serii
+  - Funkcjonalność oznaczenie wykonanej serii nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-010
   Tytuł: zakończenie treningu i podsumowanie
@@ -121,6 +127,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - rekord workouts uzupełniony datą zakończenia
   - statystyki: liczba ćwiczeń, liczba serii, suma powtórzeń, maksymalny ciężar, całkowita objętość
+  - Funkcjonalność zakończenie treningu i podsumowanie nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-011
   Tytuł: przegląd dashboardu
@@ -128,6 +135,7 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - dwa wykresy z danymi z ostatnich 7 dni
   - możliwość filtrowania zakresu (tygodniowo, miesięcznie)
+  - Funkcjonalność dashboardu nie jest dostępna bez logowania się do systemu (US-001).
 
 - ID: US-012
   Tytuł: obsługa błędów sieci i serwera
@@ -135,7 +143,29 @@ Użytkownicy nie mają jednej, łatwej w użyciu platformy webowej, która pozwo
   Kryteria akceptacji:
   - 401 przekierowuje do logowania
   - 400/422 wyświetla toaster z detalami błędu walidacji
-  - 500 wyświetla modal z opcją ponowienia żądania  
+  - 500 wyświetla modal z opcją ponowienia żądania 
+
+- ID: US-013 
+- Tytuł: Bezpieczny dostęp i uwierzytelnianie
+- Opis: Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych.
+- Kryteria akceptacji:
+  - Logowanie i rejestracja odbywają się na dedykowanych stronach.
+  - Logowanie wymaga podania adresu email i hasła.
+  - Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła.
+
+  - Użytkownik NIE MOŻE korzystać z funkcji edycja profilu bez logowania się do systemu (US-002).
+  - Użytkownik NIE MOŻE korzystać z funkcji tworzenie planu treningowego bez logowania się do systemu (US-005).
+  - Użytkownik NIE MOŻE korzystać z funkcji definiowanie serii w planie bez logowania się do systemu (US-006).
+  - Użytkownik NIE MOŻE korzystać z funkcji rozpoczęcie treningu bez logowania się do systemu (US-007).
+  - Użytkownik NIE MOŻE korzystać z funkcji modyfikacja parametrów serii bez logowania się do systemu (US-008).
+  - Użytkownik NIE MOŻE korzystać z funkcji oznaczenie wykonanej serii bez logowania się do systemu (US-009).
+  - Użytkownik NIE MOŻE korzystać z funkcji zakończenie treningu i podsumowanie bez logowania się do systemu (US-010).
+  - Użytkownik NIE MOŻE korzystać z funkcji przegląd dashboardu bez logowania się do systemu (US-011).
+
+  - Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu.
+  - Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @Layout.astro.
+  - Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+  - Odzyskiwanie hasła powinno być możliwe.
 
 ## 6. Metryki sukcesu
 1. liczba zakończonych treningów tygodniowo i miesięcznie  

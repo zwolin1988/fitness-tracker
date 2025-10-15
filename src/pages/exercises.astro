@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { mockExerciseTemplates } from "@/lib/mocks";
+import { ExerciseCatalog } from "@/components/exercises";
+import type { Category } from "@/models";
+
+const categories: Category[] = [
+  { id: "strength", label: "Siłowe", icon: "💪" },
+  { id: "cardio", label: "Cardio", icon: "🏃" },
+  { id: "flexibility", label: "Rozciąganie", icon: "🧘" },
+  { id: "sports", label: "Sport", icon: "⚽" },
+  { id: "other", label: "Inne", icon: "🎯" },
+];
+---
+
+<Layout title="Katalog Ćwiczeń - Fitness Tracker">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold mb-2">Katalog Ćwiczeń</h1>
+    <p class="text-lg text-muted-foreground">Przeglądaj dostępne ćwiczenia i dodaj je do swojego treningu</p>
+  </div>
+
+  <ExerciseCatalog client:load exercises={mockExerciseTemplates} categories={categories} />
+</Layout>
