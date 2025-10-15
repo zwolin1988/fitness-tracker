@@ -1,62 +1,67 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+// src/pages/plans/[id]/edit.astro
+// Strona edycji istniejącego planu treningowego
 
+import Layout from "@/layouts/Layout.astro";
+import { PlanWizard } from "@/components/training-plan/PlanWizard";
+import { Toaster } from "@/components/ui/sonner";
+import type { TrainingPlanDetailResponse } from "@/components/training-plan/types";
+
+// Pobierz planId z URL params
 const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/plans");
+}
+
+// Pobierz query param step (opcjonalnie)
+const url = new URL(Astro.request.url);
+const stepParam = url.searchParams.get("step");
+const initialStep = stepParam ? parseInt(stepParam, 10) : 1;
+
+// Walidacja step (1, 2, lub 3)
+const validStep = initialStep >= 1 && initialStep <= 3 ? (initialStep as 1 | 2 | 3) : 1;
+
+// Server-side fetch danych planu
+let planData: TrainingPlanDetailResponse | null = null;
+let error: string | null = null;
+
+try {
+  // TODO: Pobierz supabase client z context.locals
+  // W tym momencie zakładamy że fetch jest dostępny
+  const response = await fetch(`${url.origin}/api/plans/${id}`, {
+    headers: {
+      // TODO: Przekaż cookies/session z Astro.request
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      error = "Plan nie został znaleziony";
+    } else if (response.status === 403) {
+      error = "Brak dostępu do tego planu";
+    } else if (response.status === 401) {
+      // Przekieruj do logowania
+      return Astro.redirect(`/login?redirect=/plans/${id}/edit`);
+    } else {
+      error = "Nie udało się pobrać danych planu";
+    }
+  } else {
+    planData = await response.json();
+  }
+} catch (err) {
+  console.error("Error fetching plan:", err);
+  error = "Wystąpił błąd podczas pobierania danych";
+}
+
+// Jeśli błąd, przekieruj do /plans
+if (error || !planData) {
+  return Astro.redirect("/plans");
+}
 ---
 
-<Layout title="Edytuj Plan" showNavigation>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-4xl font-bold mb-4">Strona: Edycja Planu Treningowego</h1>
-
-    <div class="mb-6">
-      <p class="text-lg text-muted-foreground mb-2">
-        Ta strona będzie zawierać formularz do edycji istniejącego planu treningowego.
-      </p>
-      <p class="text-sm text-muted-foreground">
-        ID planu z URL: <code class="bg-muted px-2 py-1 rounded">{id}</code>
-      </p>
-    </div>
-
-    <div class="bg-card rounded-lg border p-6 mb-6">
-      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
-      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
-        <li>Formularz z aktualnymi danymi planu (nazwa, opis)</li>
-        <li>Lista ćwiczeń z możliwością:</li>
-        <ul class="list-circle list-inside ml-6 space-y-1">
-          <li>Dodawania nowych ćwiczeń</li>
-          <li>Usuwania istniejących ćwiczeń</li>
-          <li>Zmiany kolejności ćwiczeń</li>
-        </ul>
-        <li>Zarządzanie seriami dla każdego ćwiczenia:</li>
-        <ul class="list-circle list-inside ml-6 space-y-1">
-          <li>Dodawanie nowych serii</li>
-          <li>Edycja powtórzeń i ciężaru</li>
-          <li>Usuwanie serii</li>
-        </ul>
-        <li>Walidacja danych przed zapisem</li>
-        <li>Po zapisie przekierowanie do szczegółów planu</li>
-      </ul>
-    </div>
-
-    <div class="bg-muted rounded-lg p-6">
-      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
-      <div class="space-y-2 font-mono text-sm">
-        <div>
-          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/plans/{"{id}"}</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera aktualne dane planu do edycji</p>
-        </div>
-        <div>
-          <span class="text-yellow-600 dark:text-yellow-400 font-bold">PUT</span>
-          <span class="ml-2">/api/plans/{"{id}"}</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Aktualizuje plan treningowy</p>
-        </div>
-        <div>
-          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/exercises</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera listę ćwiczeń do dodania</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<Layout title={`Edytuj: ${planData.name}`} showNavigation={false}>
+  <PlanWizard mode="edit" planId={id} initialData={planData} initialStep={validStep} client:load />
+  <Toaster client:load />
 </Layout>

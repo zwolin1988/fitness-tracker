@@ -1,44 +1,24 @@
 ---
+// src/pages/plans/create.astro
+// Strona tworzenia nowego planu treningowego
+
 import Layout from "@/layouts/Layout.astro";
+import { PlanWizard } from "@/components/training-plan/PlanWizard";
+import { Toaster } from "@/components/ui/sonner";
+
+// Pobierz query param step (opcjonalnie)
+const url = new URL(Astro.request.url);
+const stepParam = url.searchParams.get("step");
+const initialStep = stepParam ? parseInt(stepParam, 10) : 1;
+
+// Walidacja step (1, 2, lub 3)
+const validStep = initialStep >= 1 && initialStep <= 3 ? (initialStep as 1 | 2 | 3) : 1;
+
+// TODO: Middleware do sprawdzenia autentykacji
+// Jeśli użytkownik nie jest zalogowany, przekieruj do /login?redirect=/plans/create
 ---
 
-<Layout title="Utwórz Plan Treningowy" showNavigation>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-4xl font-bold mb-4">Strona: Tworzenie Nowego Planu</h1>
-
-    <div class="mb-8">
-      <p class="text-lg text-muted-foreground mb-4">
-        Ta strona będzie zawierać formularz do tworzenia nowego planu treningowego.
-      </p>
-    </div>
-
-    <div class="bg-card rounded-lg border p-6 mb-6">
-      <h2 class="text-2xl font-semibold mb-4">Planowane funkcje:</h2>
-      <ul class="list-disc list-inside space-y-2 text-muted-foreground">
-        <li>Formularz z polami: nazwa planu (wymagane), opis (opcjonalnie)</li>
-        <li>Modal/sekcja wyboru ćwiczeń z biblioteki (maksymalnie 50 ćwiczeń)</li>
-        <li>Możliwość wyszukiwania ćwiczeń po nazwie</li>
-        <li>Filtrowanie ćwiczeń po kategorii</li>
-        <li>Wybrane ćwiczenia wyświetlane jako lista z możliwością usunięcia</li>
-        <li>Walidacja: wymagana nazwa i co najmniej jedno ćwiczenie</li>
-        <li>Po utworzeniu przekierowanie do listy planów</li>
-      </ul>
-    </div>
-
-    <div class="bg-muted rounded-lg p-6">
-      <h3 class="text-xl font-semibold mb-3">Endpointy API:</h3>
-      <div class="space-y-2 font-mono text-sm">
-        <div>
-          <span class="text-blue-600 dark:text-blue-400 font-bold">POST</span>
-          <span class="ml-2">/api/plans</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Tworzy nowy plan treningowy z wybranymi ćwiczeniami</p>
-        </div>
-        <div>
-          <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/exercises</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera listę dostępnych ćwiczeń do wyboru</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<Layout title="Nowy plan treningowy" showNavigation>
+  <PlanWizard mode="create" initialStep={validStep} client:load />
+  <Toaster client:load />
 </Layout>

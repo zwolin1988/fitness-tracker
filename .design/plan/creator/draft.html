@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Workout Plan - FitTrack</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend:wght@400;500;600;700" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0b73da",
+            "background-light": "#f5f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            display: ["Lexend"],
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen">
+<header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-black/10 dark:border-white/10 shrink-0">
+<div class="flex items-center gap-2">
+<div class="text-primary size-7">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold text-black dark:text-white">FitTrack</h1>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<button class="flex items-center justify-center rounded-full size-10 text-black/80 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBTB_zLKb3J-9FD3hdGoBulKwM05Vcbvkf-RNurW18wNaJSwa7FSJxuJMD3OYwH2PLRqs8ZxsFRKxuwbWTTiQBAq6ZbVaeW3Z4GacnSttXr5d2RQQrnzpLv9fgL_u4vJ2RhT8mhg07pWLO4TfBW6buJXUjvrGvqbURPrdrRcrDZTFhbSA-KiB6LhrpSLBq_GZf6EPJfKun36FkROP2_P0HMyi4e1Kr0P5R4sFWxv38k0T0l_vLNllFo7OL4FifLiSh24zwwDioIkg");'></div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8">
+<div class="flex flex-col gap-8">
+<div>
+<p class="text-sm font-medium text-black/60 dark:text-white/60 mb-2">
+            Step 1 of 4
+          </p>
+<div class="w-full h-2 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div class="space-y-1">
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">
+              Create a Workout Plan
+            </h2>
+<p class="text-base text-black/60 dark:text-white/60">
+              Start by giving your new plan some basic details.
+            </p>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="font-medium text-black dark:text-white" for="plan-name">Plan Name <span class="text-primary">*</span></label>
+<input class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-200" id="plan-name" placeholder="e.g. Upper Body Strength" required="" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-medium text-black dark:text-white" for="description">Description (Optional)</label>
+<textarea class="w-full p-4 rounded-lg bg-background-light dark:bg-background-dark border border-black/20 dark:border-white/20 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 focus:ring-2 focus:ring-primary focus:border-primary transition-shadow duration-200 resize-none" id="description" placeholder="A brief summary of your workout plan..." rows="4"></textarea>
+</div>
+<fieldset class="space-y-3">
+<legend class="font-medium text-black dark:text-white">
+                Training Goal
+              </legend>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<label class="flex items-center justify-center h-11 px-3 rounded-lg text-sm font-medium border border-black/20 dark:border-white/20 text-black dark:text-white cursor-pointer has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-white transition-colors">
+<input class="sr-only" name="training-goal" type="radio" value="strength"/>
+                  Strength
+                </label>
+<label class="flex items-center justify-center h-11 px-3 rounded-lg text-sm font-medium border border-black/20 dark:border-white/20 text-black dark:text-white cursor-pointer has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-white transition-colors">
+<input class="sr-only" name="training-goal" type="radio" value="muscle-mass"/>
+                  Muscle Mass
+                </label>
+<label class="flex items-center justify-center h-11 px-3 rounded-lg text-sm font-medium border border-black/20 dark:border-white/20 text-black dark:text-white cursor-pointer has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-white transition-colors">
+<input class="sr-only" name="training-goal" type="radio" value="endurance"/>
+                  Endurance
+                </label>
+<label class="flex items-center justify-center h-11 px-3 rounded-lg text-sm font-medium border border-black/20 dark:border-white/20 text-black dark:text-white cursor-pointer has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-white transition-colors">
+<input class="sr-only" name="training-goal" type="radio" value="general-fitness"/>
+                  General Fitness
+                </label>
+</div>
+</fieldset>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row-reverse sm:justify-start gap-3 pt-4">
+<button class="flex items-center justify-center h-12 px-6 rounded-lg bg-primary text-white text-base font-semibold hover:opacity-90 transition-opacity">
+            Next
+          </button>
+<button class="flex items-center justify-center h-12 px-6 rounded-lg bg-black/10 dark:bg-white/10 text-black dark:text-white text-base font-semibold hover:bg-black/20 dark:hover:bg-white/20 transition-colors">
+            Cancel
+          </button>
+</div>
+</div>
+</main>
+<div class="fixed inset-x-0 bottom-0 sm:bottom-4 flex justify-center p-4 z-50">
+<div class="w-full max-w-lg bg-background-dark/90 dark:bg-background-light/90 backdrop-blur-sm rounded-xl p-4 shadow-2xl border border-white/10 dark:border-black/10">
+<div class="flex flex-col sm:flex-row items-center gap-4">
+<p class="text-white dark:text-black font-medium text-center sm:text-left flex-grow">
+            Znaleziono niezakończony plan. Przywrócić?
+          </p>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="flex-1 sm:flex-initial h-10 px-5 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity">
+              Przywróć
+            </button>
+<button class="flex-1 sm:flex-initial h-10 px-5 rounded-lg bg-white/10 dark:bg-black/10 text-white dark:text-black text-sm font-semibold hover:bg-white/20 dark:hover:bg-black/20 transition-colors">
+              Odrzuć
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

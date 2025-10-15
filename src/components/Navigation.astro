@@ -3,109 +3,36 @@
 const currentPath = Astro.url.pathname;
 ---
 
-<nav class="border-b bg-card">
-  <div class="container mx-auto px-4">
+<nav class="border-b border-border bg-background sticky top-0 z-50">
+  <div class="container mx-auto px-4 sm:px-6">
     <div class="flex h-16 items-center justify-between">
-      <div class="flex items-center space-x-8">
-        <a href="/" class="text-xl font-bold text-primary"> 💪 Fitness Tracker </a>
-
-        <div class="hidden md:flex space-x-6">
-          <a
-            href="/dashboard"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath === "/dashboard" ? "text-primary" : ""}`}
-          >
-            Dashboard
-          </a>
-          <a
-            href="/workouts"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/workouts") ? "text-primary" : ""}`}
-          >
-            Treningi
-          </a>
-          <a
-            href="/plans"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/plans") ? "text-primary" : ""}`}
-          >
-            Plany
-          </a>
-          <a
-            href="/categories"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/categories") ? "text-primary" : ""}`}
-          >
-            Kategorie
-          </a>
+      <div class="flex items-center gap-2">
+        <div class="text-primary size-7">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+          </svg>
         </div>
+        <h1 class="text-xl font-bold text-foreground">FitTrack</h1>
       </div>
 
-      <div class="flex items-center space-x-4">
-        <a
-          href="/profile"
-          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+      <div class="flex items-center gap-2 sm:gap-4">
+        <button
+          id="menu-button"
+          class="flex items-center justify-center rounded-full size-10 text-foreground/80 hover:bg-muted transition-colors"
+          aria-label="Open menu"
         >
-          <span class="mr-2">👤</span> Profil
-        </a>
-        <a
-          href="/auth/login"
-          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-        >
-          Zaloguj
-        </a>
-        <a
-          href="/auth/register"
-          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-        >
-          Zarejestruj
+          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+        <a href="/profile" class="size-10 rounded-full overflow-hidden bg-muted">
+          <img
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=fitness"
+            alt="User avatar"
+            class="size-full object-cover"
+          />
         </a>
       </div>
-    </div>
-
-    <!-- Mobile menu button -->
-    <div class="md:hidden">
-      <button
-        id="mobile-menu-button"
-        type="button"
-        class="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
-      >
-        <span class="sr-only">Open main menu</span>
-        <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile menu -->
-  <div class="hidden md:hidden" id="mobile-menu">
-    <div class="px-2 pt-2 pb-3 space-y-1">
-      <a href="/dashboard" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
-        >Dashboard</a
-      >
-      <a href="/workouts" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
-        >Treningi</a
-      >
-      <a href="/plans" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
-        >Plany</a
-      >
-      <a href="/categories" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
-        >Kategorie</a
-      >
-      <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
-        >Profil</a
-      >
     </div>
   </div>
 </nav>
-
-<script>
-  // Mobile menu toggle
-  const mobileMenuButton = document.getElementById("mobile-menu-button");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  mobileMenuButton?.addEventListener("click", () => {
-    const isExpanded = mobileMenuButton.getAttribute("aria-expanded") === "true";
-    mobileMenuButton.setAttribute("aria-expanded", (!isExpanded).toString());
-    mobileMenu?.classList.toggle("hidden");
-  });
-</script>

@@ -1,5 +1,5 @@
-// src/pages/api/plans.ts
-// API endpoint for listing and creating training plans
+// src/pages/api/plans/index.ts
+// API endpoints for listing and creating training plans
 
 import type { APIRoute } from "astro";
 
@@ -11,7 +11,7 @@ export const prerender = false;
 
 /**
  * GET /api/plans
- * Returns a list of training plans for the authenticated user
+ * Returns list of training plans for the authenticated user
  * Requires: Authorization header with Bearer token
  */
 export const GET: APIRoute = async ({ locals }) => {
@@ -44,7 +44,7 @@ export const GET: APIRoute = async ({ locals }) => {
       );
     }
 
-    // Fetch user's training plans
+    // Fetch training plans list
     const result = await listTrainingPlans(supabase, user.id);
 
     return new Response(JSON.stringify(result), {
@@ -82,10 +82,9 @@ export const GET: APIRoute = async ({ locals }) => {
 
 /**
  * POST /api/plans
- * Creates a new training plan for the authenticated user
+ * Creates a new training plan with exercises and optional sets
  * Requires: Authorization header with Bearer token
- * Body: { name, description?, exerciseIds }
- * Business rule: Max 7 training plans per user
+ * Body: { name, description?, exercises: [{ exerciseId, sets?: [...] }] }
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -143,13 +142,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
           details: validationResult.error.flatten().fieldErrors,
         }),
         {
-          status: 400,
+          status: 422,
           headers: { "Content-Type": "application/json" },
         }
       );
     }
 
-    // Create training plan
+    // Create training plan (bulk create with exercises and sets)
     const newPlan = await createTrainingPlan(supabase, user.id, validationResult.data);
 
     return new Response(JSON.stringify(newPlan), {
