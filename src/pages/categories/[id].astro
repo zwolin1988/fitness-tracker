@@ -1,5 +1,5 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
 
 export const prerender = false;
 
@@ -16,9 +16,7 @@ const { id } = Astro.params;
 
     <div class="mb-8">
       <h1 class="text-3xl font-bold mb-2">Strona: Szczegóły Kategorii</h1>
-      <p class="text-muted-foreground">
-        Tutaj będą szczegóły kategorii i lista ćwiczeń w tej kategorii
-      </p>
+      <p class="text-muted-foreground">Tutaj będą szczegóły kategorii i lista ćwiczeń w tej kategorii</p>
       <p class="text-sm text-muted-foreground mt-2">
         ID kategorii: <code class="bg-muted px-2 py-1 rounded">{id}</code>
       </p>
@@ -27,16 +25,12 @@ const { id } = Astro.params;
     <div class="grid gap-6">
       <div class="bg-card rounded-lg border p-6">
         <h2 class="text-xl font-semibold mb-4">Informacje o kategorii</h2>
-        <p class="text-muted-foreground">
-          Nazwa, opis, obrazek i liczba ćwiczeń w kategorii
-        </p>
+        <p class="text-muted-foreground">Nazwa, opis, obrazek i liczba ćwiczeń w kategorii</p>
       </div>
 
       <div class="bg-card rounded-lg border p-6">
         <h2 class="text-xl font-semibold mb-4">Lista ćwiczeń w kategorii</h2>
-        <p class="text-muted-foreground mb-4">
-          Grid z ćwiczeniami należącymi do tej kategorii
-        </p>
+        <p class="text-muted-foreground mb-4">Grid z ćwiczeniami należącymi do tej kategorii</p>
         <div class="text-sm text-muted-foreground">
           <p class="font-semibold mb-2">Planowane funkcje:</p>
           <ul class="list-disc list-inside space-y-1">

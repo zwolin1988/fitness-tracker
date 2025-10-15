@@ -1,5 +1,5 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout title="Trening w trakcie" showNavigation={false}>
@@ -40,17 +40,17 @@ import Layout from '@/layouts/Layout.astro';
       <div class="space-y-2 font-mono text-sm">
         <div>
           <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/workouts/{'{id}'}</span>
+          <span class="ml-2">/api/workouts/{"{id}"}</span>
           <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera aktualny stan treningu</p>
         </div>
         <div>
           <span class="text-yellow-600 dark:text-yellow-400 font-bold">PATCH</span>
-          <span class="ml-2">/api/workouts/{'{id}'}/sets/{'{setId}'}</span>
+          <span class="ml-2">/api/workouts/{"{id}"}/sets/{"{setId}"}</span>
           <p class="text-xs text-muted-foreground ml-14 mt-1">Aktualizuje status lub wartości serii</p>
         </div>
         <div>
           <span class="text-blue-600 dark:text-blue-400 font-bold">POST</span>
-          <span class="ml-2">/api/workouts/{'{id}'}/end</span>
+          <span class="ml-2">/api/workouts/{"{id}"}/end</span>
           <p class="text-xs text-muted-foreground ml-14 mt-1">Kończy trening i ustawia end_time</p>
         </div>
       </div>

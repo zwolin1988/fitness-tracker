@@ -14,7 +14,7 @@ type TypedSupabaseClient = SupabaseClient<Database>;
 export class WorkoutError extends Error {
   constructor(
     message: string,
-    public statusCode: number = 500,
+    public statusCode = 500,
     public code?: string
   ) {
     super(message);
@@ -98,27 +98,15 @@ export interface WorkoutListFilters {
  * Checks if the workout belongs to the specified user
  * @throws WorkoutError if workout doesn't exist or user is not the owner
  */
-async function checkWorkoutOwnership(
-  supabase: TypedSupabaseClient,
-  workoutId: string,
-  userId: string
-): Promise<void> {
-  const { data: workout, error } = await supabase
-    .from("workouts")
-    .select("user_id")
-    .eq("id", workoutId)
-    .single();
+async function checkWorkoutOwnership(supabase: TypedSupabaseClient, workoutId: string, userId: string): Promise<void> {
+  const { data: workout, error } = await supabase.from("workouts").select("user_id").eq("id", workoutId).single();
 
   if (error || !workout) {
     throw new WorkoutError("Workout not found", 404, "WORKOUT_NOT_FOUND");
   }
 
   if (workout.user_id !== userId) {
-    throw new WorkoutError(
-      "You do not have permission to access this workout",
-      403,
-      "WORKOUT_ACCESS_DENIED"
-    );
+    throw new WorkoutError("You do not have permission to access this workout", 403, "WORKOUT_ACCESS_DENIED");
   }
 }
 
@@ -126,26 +114,15 @@ async function checkWorkoutOwnership(
  * Checks if workout is not yet completed (end_time is null)
  * @throws WorkoutError if workout is already completed
  */
-async function checkWorkoutNotCompleted(
-  supabase: TypedSupabaseClient,
-  workoutId: string
-): Promise<void> {
-  const { data: workout, error } = await supabase
-    .from("workouts")
-    .select("end_time")
-    .eq("id", workoutId)
-    .single();
+async function checkWorkoutNotCompleted(supabase: TypedSupabaseClient, workoutId: string): Promise<void> {
+  const { data: workout, error } = await supabase.from("workouts").select("end_time").eq("id", workoutId).single();
 
   if (error || !workout) {
     throw new WorkoutError("Workout not found", 404, "WORKOUT_NOT_FOUND");
   }
 
   if (workout.end_time !== null) {
-    throw new WorkoutError(
-      "Cannot modify a completed workout",
-      409,
-      "WORKOUT_ALREADY_COMPLETED"
-    );
+    throw new WorkoutError("Cannot modify a completed workout", 409, "WORKOUT_ALREADY_COMPLETED");
   }
 }
 
@@ -158,36 +135,21 @@ async function validateTrainingPlanAccess(
   planId: string,
   userId: string
 ): Promise<void> {
-  const { data: plan, error } = await supabase
-    .from("training_plans")
-    .select("id, user_id")
-    .eq("id", planId)
-    .single();
+  const { data: plan, error } = await supabase.from("training_plans").select("id, user_id").eq("id", planId).single();
 
   if (error || !plan) {
-    throw new WorkoutError(
-      "Training plan not found",
-      404,
-      "TRAINING_PLAN_NOT_FOUND"
-    );
+    throw new WorkoutError("Training plan not found", 404, "TRAINING_PLAN_NOT_FOUND");
   }
 
   if (plan.user_id !== userId) {
-    throw new WorkoutError(
-      "You do not have access to this training plan",
-      403,
-      "TRAINING_PLAN_ACCESS_DENIED"
-    );
+    throw new WorkoutError("You do not have access to this training plan", 403, "TRAINING_PLAN_ACCESS_DENIED");
   }
 }
 
 /**
  * Gets the next set order for a workout
  */
-async function getNextSetOrder(
-  supabase: TypedSupabaseClient,
-  workoutId: string
-): Promise<number> {
+async function getNextSetOrder(supabase: TypedSupabaseClient, workoutId: string): Promise<number> {
   const { data, error } = await supabase
     .from("workout_sets")
     .select("set_order")
@@ -219,9 +181,7 @@ function calculateWorkoutSummary(workout: any): {
   const totalSets = workout.workout_sets?.length || 0;
 
   // Simple calorie estimation: 5 calories per set + 0.1 calorie per second
-  const estimatedCalories = duration
-    ? Math.round(totalSets * 5 + duration * 0.1)
-    : null;
+  const estimatedCalories = duration ? Math.round(totalSets * 5 + duration * 0.1) : null;
 
   return { duration, totalSets, estimatedCalories };
 }
@@ -408,9 +368,7 @@ export async function getWorkoutById(
   }
 
   // Map sets with exercise names
-  const sets = (workout.workout_sets || [])
-    .sort((a: any, b: any) => a.set_order - b.set_order)
-    .map(mapWorkoutSetToDTO);
+  const sets = (workout.workout_sets || []).sort((a: any, b: any) => a.set_order - b.set_order).map(mapWorkoutSetToDTO);
 
   return {
     ...mapWorkoutToDTO(workout),
@@ -494,11 +452,7 @@ export async function createWorkoutSet(
     .single();
 
   if (exerciseError || !exercise) {
-    throw new WorkoutError(
-      `Exercise with ID ${command.exercise_id} not found`,
-      404,
-      "EXERCISE_NOT_FOUND"
-    );
+    throw new WorkoutError(`Exercise with ID ${command.exercise_id} not found`, 404, "EXERCISE_NOT_FOUND");
   }
 
   // Get next set order
@@ -554,11 +508,7 @@ export async function updateWorkoutSet(
   }
 
   if (existingSet.workout_id !== workoutId) {
-    throw new WorkoutError(
-      "Workout set does not belong to the specified workout",
-      400,
-      "WORKOUT_SET_MISMATCH"
-    );
+    throw new WorkoutError("Workout set does not belong to the specified workout", 400, "WORKOUT_SET_MISMATCH");
   }
 
   // Build update object with only provided fields

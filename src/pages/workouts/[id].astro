@@ -1,5 +1,5 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import Layout from "@/layouts/Layout.astro";
 
 const { id } = Astro.params;
 ---
@@ -9,9 +9,7 @@ const { id } = Astro.params;
     <h1 class="text-4xl font-bold mb-4">Strona: Szczegóły Treningu</h1>
 
     <div class="mb-6">
-      <p class="text-lg text-muted-foreground mb-2">
-        Ta strona będzie wyświetlać podsumowanie zakończonego treningu.
-      </p>
+      <p class="text-lg text-muted-foreground mb-2">Ta strona będzie wyświetlać podsumowanie zakończonego treningu.</p>
       <p class="text-sm text-muted-foreground">
         ID treningu z URL: <code class="bg-muted px-2 py-1 rounded">{id}</code>
       </p>
@@ -43,8 +41,10 @@ const { id } = Astro.params;
       <div class="space-y-2 font-mono text-sm">
         <div>
           <span class="text-green-600 dark:text-green-400 font-bold">GET</span>
-          <span class="ml-2">/api/workouts/{'{id}'}</span>
-          <p class="text-xs text-muted-foreground ml-14 mt-1">Pobiera szczegóły treningu wraz z ćwiczeniami i seriami</p>
+          <span class="ml-2">/api/workouts/{"{id}"}</span>
+          <p class="text-xs text-muted-foreground ml-14 mt-1">
+            Pobiera szczegóły treningu wraz z ćwiczeniami i seriami
+          </p>
         </div>
       </div>
     </div>

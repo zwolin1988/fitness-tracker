@@ -11,14 +11,8 @@ import { z } from "zod";
  * - limit: must be between 1 and 100 (default: 20)
  */
 export const ListExercisesQuerySchema = z.object({
-  categoryId: z
-    .string()
-    .uuid("Category ID must be a valid UUID")
-    .optional(),
-  difficulty: z
-    .string()
-    .min(1, "Difficulty cannot be empty")
-    .optional(),
+  categoryId: z.string().uuid("Category ID must be a valid UUID").optional(),
+  difficulty: z.string().min(1, "Difficulty cannot be empty").optional(),
   page: z
     .string()
     .optional()
@@ -51,11 +45,7 @@ export type ExerciseIdParam = z.infer<typeof ExerciseIdParamSchema>;
  * - category_id: required, must be valid UUID
  */
 export const CreateExerciseSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Exercise name is required")
-    .max(200, "Exercise name must not exceed 200 characters")
-    .trim(),
+  name: z.string().min(1, "Exercise name is required").max(200, "Exercise name must not exceed 200 characters").trim(),
   description: z
     .string()
     .max(1000, "Description must not exceed 1000 characters")
@@ -69,14 +59,8 @@ export const CreateExerciseSchema = z.object({
     .optional()
     .nullable()
     .transform((val) => val || null),
-  difficulty: z
-    .string()
-    .min(1, "Difficulty is required")
-    .max(50, "Difficulty must not exceed 50 characters")
-    .trim(),
-  category_id: z
-    .string()
-    .uuid("Category ID must be a valid UUID"),
+  difficulty: z.string().min(1, "Difficulty is required").max(50, "Difficulty must not exceed 50 characters").trim(),
+  category_id: z.string().uuid("Category ID must be a valid UUID"),
 });
 
 export type CreateExerciseBody = z.infer<typeof CreateExerciseSchema>;
@@ -112,10 +96,7 @@ export const UpdateExerciseSchema = z
       .max(50, "Difficulty must not exceed 50 characters")
       .trim()
       .optional(),
-    category_id: z
-      .string()
-      .uuid("Category ID must be a valid UUID")
-      .optional(),
+    category_id: z.string().uuid("Category ID must be a valid UUID").optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",

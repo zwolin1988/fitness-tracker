@@ -12,25 +12,25 @@ const currentPath = Astro.url.pathname;
         <div class="hidden md:flex space-x-6">
           <a
             href="/dashboard"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath === '/dashboard' ? 'text-primary' : ''}`}
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath === "/dashboard" ? "text-primary" : ""}`}
           >
             Dashboard
           </a>
           <a
             href="/workouts"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/workouts') ? 'text-primary' : ''}`}
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/workouts") ? "text-primary" : ""}`}
           >
             Treningi
           </a>
           <a
             href="/plans"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/plans') ? 'text-primary' : ''}`}
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/plans") ? "text-primary" : ""}`}
           >
             Plany
           </a>
           <a
             href="/categories"
-            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith('/categories') ? 'text-primary' : ''}`}
+            class={`text-sm font-medium hover:text-primary transition-colors ${currentPath.startsWith("/categories") ? "text-primary" : ""}`}
           >
             Kategorie
           </a>
@@ -70,7 +70,7 @@ const currentPath = Astro.url.pathname;
       >
         <span class="sr-only">Open main menu</span>
         <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
         </svg>
       </button>
     </div>
@@ -79,23 +79,33 @@ const currentPath = Astro.url.pathname;
   <!-- Mobile menu -->
   <div class="hidden md:hidden" id="mobile-menu">
     <div class="px-2 pt-2 pb-3 space-y-1">
-      <a href="/dashboard" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Dashboard</a>
-      <a href="/workouts" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Treningi</a>
-      <a href="/plans" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Plany</a>
-      <a href="/categories" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Kategorie</a>
-      <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent">Profil</a>
+      <a href="/dashboard" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
+        >Dashboard</a
+      >
+      <a href="/workouts" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
+        >Treningi</a
+      >
+      <a href="/plans" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
+        >Plany</a
+      >
+      <a href="/categories" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
+        >Kategorie</a
+      >
+      <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium hover:text-primary hover:bg-accent"
+        >Profil</a
+      >
     </div>
   </div>
 </nav>
 
 <script>
   // Mobile menu toggle
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuButton = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
 
-  mobileMenuButton?.addEventListener('click', () => {
-    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-    mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
-    mobileMenu?.classList.toggle('hidden');
+  mobileMenuButton?.addEventListener("click", () => {
+    const isExpanded = mobileMenuButton.getAttribute("aria-expanded") === "true";
+    mobileMenuButton.setAttribute("aria-expanded", (!isExpanded).toString());
+    mobileMenu?.classList.toggle("hidden");
   });
 </script>

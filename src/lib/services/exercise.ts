@@ -376,11 +376,7 @@ export async function deleteExercise(supabase: TypedSupabaseClient, id: string):
     }
 
     if (planSetsCount && planSetsCount > 0) {
-      throw new ExerciseError(
-        "Cannot delete exercise that is used in training plans",
-        409,
-        "IN_USE_IN_PLANS"
-      );
+      throw new ExerciseError("Cannot delete exercise that is used in training plans", 409, "IN_USE_IN_PLANS");
     }
 
     // Check if exercise is used in workout_sets
@@ -395,11 +391,7 @@ export async function deleteExercise(supabase: TypedSupabaseClient, id: string):
     }
 
     if (workoutSetsCount && workoutSetsCount > 0) {
-      throw new ExerciseError(
-        "Cannot delete exercise that is used in workouts",
-        409,
-        "IN_USE_IN_WORKOUTS"
-      );
+      throw new ExerciseError("Cannot delete exercise that is used in workouts", 409, "IN_USE_IN_WORKOUTS");
     }
 
     // Delete exercise
