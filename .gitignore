@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+supabase/migrations/20251014130400_create_auth_users.sql
+.gitignore
+supabase/migrations/20251014130500_add_test_users.sql

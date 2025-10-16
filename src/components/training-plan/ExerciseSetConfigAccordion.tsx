@@ -1,9 +1,10 @@
 // src/components/training-plan/ExerciseSetConfigAccordion.tsx
 // Collapsible accordion dla pojedynczego ćwiczenia w kroku 3
 
-import { GripVertical } from "lucide-react";
+import { GripVertical, Trash2 } from "lucide-react";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 import { SetFormList } from "./SetFormList";
 import type { ExerciseSetConfigAccordionProps } from "./types";
@@ -17,6 +18,7 @@ export function ExerciseSetConfigAccordion({
   isExpanded,
   onToggle,
   onSetsChange,
+  onRemoveExercise,
   dragHandleProps,
 }: ExerciseSetConfigAccordionProps) {
   return (
@@ -40,6 +42,21 @@ export function ExerciseSetConfigAccordion({
               <span className="font-semibold text-gray-900">{exercise.name}</span>
             </div>
           </AccordionTrigger>
+
+          {/* Remove Exercise Button */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemoveExercise?.();
+            }}
+            className="h-8 w-8 text-red-600 hover:bg-red-100 hover:text-red-700"
+            aria-label={`Usuń ćwiczenie ${exercise.name}`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Accordion Content */}

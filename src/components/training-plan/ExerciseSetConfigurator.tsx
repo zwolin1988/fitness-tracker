@@ -24,11 +24,13 @@ function SortableExerciseItem({
   isExpanded,
   onToggle,
   onSetsChange,
+  onRemoveExercise,
 }: {
   exerciseWithSets: ExerciseWithSets;
   isExpanded: boolean;
   onToggle: () => void;
   onSetsChange: (sets: SetFormData[]) => void;
+  onRemoveExercise: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: exerciseWithSets.exercise.id,
@@ -48,6 +50,7 @@ function SortableExerciseItem({
         isExpanded={isExpanded}
         onToggle={onToggle}
         onSetsChange={onSetsChange}
+        onRemoveExercise={onRemoveExercise}
         dragHandleProps={listeners}
       />
     </div>
@@ -57,14 +60,22 @@ function SortableExerciseItem({
 /**
  * Główny komponent konfiguracji serii dla wybranych ćwiczeń
  */
-export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigured }: ExerciseSetConfiguratorProps) {
+export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigured, onExerciseRemoved }: ExerciseSetConfiguratorProps) {
   // Inicjalizacja stanu z exercisesWithSets
   const [exercisesWithSets, setExercisesWithSets] = useState<ExerciseWithSets[]>(() => {
-    return exercises.map((exercise, index) => ({
-      exercise,
-      sets: initialSets?.get(exercise.id) || [],
-      order: index,
-    }));
+    return exercises.map((exercise, index) => {
+      const existingSets = initialSets?.get(exercise.id);
+      // Jeśli nie ma żadnych serii, dodaj jedną serię z domyślnymi wartościami
+      const sets = existingSets && existingSets.length > 0
+        ? existingSets
+        : [{ repetitions: 1, weight: 2.5, set_order: 0 }];
+
+      return {
+        exercise,
+        sets,
+        order: index,
+      };
+    });
   });
 
   const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(
@@ -120,6 +131,31 @@ export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigur
   };
 
   /**
+   * Obsługa usunięcia ćwiczenia
+   */
+  const handleRemoveExercise = (exerciseId: string) => {
+    setExercisesWithSets((prev) => {
+      const filtered = prev.filter((item) => item.exercise.id !== exerciseId);
+      // Zaktualizuj order po usunięciu
+      return filtered.map((item, index) => ({
+        ...item,
+        order: index,
+      }));
+    });
+
+    // Jeśli usunięte ćwiczenie było rozwinięte, rozwiń pierwsze pozostałe
+    if (expandedExerciseId === exerciseId) {
+      setExpandedExerciseId((prev) => {
+        const remaining = exercisesWithSets.filter((item) => item.exercise.id !== exerciseId);
+        return remaining.length > 0 ? remaining[0].exercise.id : null;
+      });
+    }
+
+    // Wywołaj callback, aby poinformować wizarda o usunięciu (synchronizacja z krokiem 2)
+    onExerciseRemoved?.(exerciseId);
+  };
+
+  /**
    * Wywołaj onSetsConfigured przy każdej zmianie
    */
   useEffect(() => {
@@ -148,6 +184,7 @@ export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigur
                   isExpanded={expandedExerciseId === exerciseWithSets.exercise.id}
                   onToggle={() => handleToggle(exerciseWithSets.exercise.id)}
                   onSetsChange={(sets) => handleSetsChange(exerciseWithSets.exercise.id, sets)}
+                  onRemoveExercise={() => handleRemoveExercise(exerciseWithSets.exercise.id)}
                 />
               ))}
             </div>
