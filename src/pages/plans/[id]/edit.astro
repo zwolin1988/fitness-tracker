@@ -1,67 +1,17 @@
 ---
-// src/pages/plans/[id]/edit.astro
-// Strona edycji istniejącego planu treningowego
-
 import Layout from "@/layouts/Layout.astro";
 import { PlanWizard } from "@/components/training-plan/PlanWizard";
 import { Toaster } from "@/components/ui/sonner";
-import type { TrainingPlanDetailResponse } from "@/components/training-plan/types";
 
-// Pobierz planId z URL params
+// Get plan ID from URL params
 const { id } = Astro.params;
 
 if (!id) {
   return Astro.redirect("/plans");
 }
-
-// Pobierz query param step (opcjonalnie)
-const url = new URL(Astro.request.url);
-const stepParam = url.searchParams.get("step");
-const initialStep = stepParam ? parseInt(stepParam, 10) : 1;
-
-// Walidacja step (1, 2, lub 3)
-const validStep = initialStep >= 1 && initialStep <= 3 ? (initialStep as 1 | 2 | 3) : 1;
-
-// Server-side fetch danych planu
-let planData: TrainingPlanDetailResponse | null = null;
-let error: string | null = null;
-
-try {
-  // TODO: Pobierz supabase client z context.locals
-  // W tym momencie zakładamy że fetch jest dostępny
-  const response = await fetch(`${url.origin}/api/plans/${id}`, {
-    headers: {
-      // TODO: Przekaż cookies/session z Astro.request
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    if (response.status === 404) {
-      error = "Plan nie został znaleziony";
-    } else if (response.status === 403) {
-      error = "Brak dostępu do tego planu";
-    } else if (response.status === 401) {
-      // Przekieruj do logowania
-      return Astro.redirect(`/login?redirect=/plans/${id}/edit`);
-    } else {
-      error = "Nie udało się pobrać danych planu";
-    }
-  } else {
-    planData = await response.json();
-  }
-} catch (err) {
-  console.error("Error fetching plan:", err);
-  error = "Wystąpił błąd podczas pobierania danych";
-}
-
-// Jeśli błąd, przekieruj do /plans
-if (error || !planData) {
-  return Astro.redirect("/plans");
-}
 ---
 
-<Layout title={`Edytuj: ${planData.name}`} showNavigation={false}>
-  <PlanWizard mode="edit" planId={id} initialData={planData} initialStep={validStep} client:load />
+<Layout title="Edytuj Plan Treningowy" showNavigation>
+  <PlanWizard client:load mode="edit" planId={id} />
   <Toaster client:load />
 </Layout>

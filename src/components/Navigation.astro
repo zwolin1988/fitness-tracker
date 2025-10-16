@@ -37,12 +37,14 @@ try {
 const isLoggedIn = !!user;
 ---
 
-<nav class={`border-b border-border sticky top-0 z-50 ${isAdmin ? 'bg-gradient-to-r from-primary/10 to-primary/5' : 'bg-background'}`}>
+<nav
+  class={`border-b border-border sticky top-0 z-50 ${isAdmin ? "bg-gradient-to-r from-primary/10 to-primary/5" : "bg-background"}`}
+>
   <div class="container mx-auto px-4 sm:px-6">
     <div class="flex h-16 items-center justify-between">
       <div class="flex items-center gap-6">
         <a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div class={`size-7 ${isAdmin ? 'text-primary' : 'text-primary'}`}>
+          <div class={`size-7 ${isAdmin ? "text-primary" : "text-primary"}`}>
             <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"
@@ -50,61 +52,65 @@ const isLoggedIn = !!user;
             </svg>
           </div>
           <h1 class="text-xl font-bold text-foreground">FitTrack</h1>
-          {isAdmin && (
-            <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-              ADMIN
-            </span>
-          )}
+          {
+            isAdmin && (
+              <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+                ADMIN
+              </span>
+            )
+          }
         </a>
 
         {/* Navigation links for logged-in users */}
-        {isLoggedIn && (
-          <nav class="hidden md:flex items-center gap-1">
-            <a
-              href="/dashboard"
-              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-            >
-              Dashboard
-            </a>
-            <a
-              href="/plans"
-              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-            >
-              Plany treningowe
-            </a>
-            <a
-              href="/workouts"
-              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-            >
-              Treningi
-            </a>
-            <a
-              href="/profile"
-              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-            >
-              Profil
-            </a>
+        {
+          isLoggedIn && (
+            <nav class="hidden md:flex items-center gap-1">
+              <a
+                href="/dashboard"
+                class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              >
+                Dashboard
+              </a>
+              <a
+                href="/plans"
+                class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              >
+                Plany treningowe
+              </a>
+              <a
+                href="/workouts"
+                class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              >
+                Treningi
+              </a>
+              <a
+                href="/profile"
+                class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              >
+                Profil
+              </a>
 
-            {/* Admin-only navigation */}
-            {isAdmin && (
-              <>
-                <div class="w-px h-6 bg-border mx-2"></div>
-                <a
-                  href="/admin/categories"
-                  class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                >
-                  Kategorie
-                </a>
-                <a
-                  href="/admin/exercises"
-                  class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                >
-                  Ćwiczenia
-                </a>
-              </>
-            )}
-          </nav>
-        )}
+              {/* Admin-only navigation */}
+              {isAdmin && (
+                <>
+                  <div class="w-px h-6 bg-border mx-2" />
+                  <a
+                    href="/admin/categories"
+                    class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                  >
+                    Kategorie
+                  </a>
+                  <a
+                    href="/admin/exercises"
+                    class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                  >
+                    Ćwiczenia
+                  </a>
+                </>
+              )}
+            </nav>
+          )
+        }
       </div>
 
       <div class="flex items-center gap-2 sm:gap-4">
@@ -150,69 +156,66 @@ const isLoggedIn = !!user;
     </div>
 
     {/* Mobile menu */}
-    {isLoggedIn && (
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden pb-4 pt-2 border-t border-border mt-2"
-      >
-        <div class="flex flex-col gap-1">
-          <a
-            href="/dashboard"
-            class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-          >
-            Dashboard
-          </a>
-          <a
-            href="/plans"
-            class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-          >
-            Plany treningowe
-          </a>
-          <a
-            href="/workouts"
-            class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-          >
-            Treningi
-          </a>
-          <a
-            href="/profile"
-            class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-          >
-            Profil
-          </a>
+    {
+      isLoggedIn && (
+        <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 border-t border-border mt-2">
+          <div class="flex flex-col gap-1">
+            <a
+              href="/dashboard"
+              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+            >
+              Dashboard
+            </a>
+            <a
+              href="/plans"
+              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+            >
+              Plany treningowe
+            </a>
+            <a
+              href="/workouts"
+              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+            >
+              Treningi
+            </a>
+            <a
+              href="/profile"
+              class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+            >
+              Profil
+            </a>
 
-          {isAdmin && (
-            <>
-              <div class="h-px bg-border my-2"></div>
-              <div class="px-3 py-1 text-xs font-semibold text-primary uppercase">
-                Panel administracyjny
-              </div>
-              <a
-                href="/admin/categories"
-                class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-              >
-                Kategorie
-              </a>
-              <a
-                href="/admin/exercises"
-                class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-              >
-                Ćwiczenia
-              </a>
-            </>
-          )}
+            {isAdmin && (
+              <>
+                <div class="h-px bg-border my-2" />
+                <div class="px-3 py-1 text-xs font-semibold text-primary uppercase">Panel administracyjny</div>
+                <a
+                  href="/admin/categories"
+                  class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                >
+                  Kategorie
+                </a>
+                <a
+                  href="/admin/exercises"
+                  class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                >
+                  Ćwiczenia
+                </a>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    )}
+      )
+    }
   </div>
 </nav>
 
 <script>
   // Mobile menu toggle
-  const menuButton = document.getElementById('menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
+  const menuButton = document.getElementById("menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
 
-  menuButton?.addEventListener('click', () => {
-    mobileMenu?.classList.toggle('hidden');
+  menuButton?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
   });
 </script>

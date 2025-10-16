@@ -21,7 +21,13 @@ export const PlanExerciseSetInputSchema = z.object({
     .int("Repetitions must be an integer")
     .positive("Repetitions must be greater than 0")
     .max(999, "Repetitions must not exceed 999"),
-  weight: z.number().nonnegative("Weight must be 0 or greater").max(999.99, "Weight must not exceed 999.99"),
+  weight: z
+    .number({
+      required_error: "Weight is required",
+      invalid_type_error: "Weight must be a number",
+    })
+    .min(0, "Weight must be 0 or greater")
+    .max(999.99, "Weight must not exceed 999.99"),
   set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),
 });
 
@@ -63,6 +69,7 @@ export type CreateTrainingPlanBody = z.infer<typeof CreateTrainingPlanSchema>;
 /**
  * Schema for updating an existing training plan (PUT /api/plans/{id})
  * All fields are optional, but at least one must be provided
+ * Supports both simple exerciseIds update and full exercises with sets
  */
 export const UpdateTrainingPlanSchema = z
   .object({
@@ -84,9 +91,17 @@ export const UpdateTrainingPlanSchema = z
       .min(1, "At least one exercise is required")
       .max(50, "Maximum 50 exercises per plan")
       .optional(),
+    exercises: z
+      .array(PlanExerciseInputSchema)
+      .min(1, "At least one exercise is required")
+      .max(50, "Maximum 50 exercises per plan")
+      .optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",
+  })
+  .refine((data) => !(data.exerciseIds && data.exercises), {
+    message: "Cannot provide both exerciseIds and exercises - use one or the other",
   });
 
 export type UpdateTrainingPlanBody = z.infer<typeof UpdateTrainingPlanSchema>;
@@ -126,7 +141,13 @@ export const CreatePlanSetSchema = z.object({
     .int("Repetitions must be an integer")
     .positive("Repetitions must be greater than 0")
     .max(999, "Repetitions must not exceed 999"),
-  weight: z.number().nonnegative("Weight must be 0 or greater").max(999.99, "Weight must not exceed 999.99"),
+  weight: z
+    .number({
+      required_error: "Weight is required",
+      invalid_type_error: "Weight must be a number",
+    })
+    .min(0, "Weight must be 0 or greater")
+    .max(999.99, "Weight must not exceed 999.99"),
   set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),
 });
 
@@ -145,8 +166,10 @@ export const UpdatePlanSetSchema = z
       .max(999, "Repetitions must not exceed 999")
       .optional(),
     weight: z
-      .number()
-      .nonnegative("Weight must be 0 or greater")
+      .number({
+        invalid_type_error: "Weight must be a number",
+      })
+      .min(0, "Weight must be 0 or greater")
       .max(999.99, "Weight must not exceed 999.99")
       .optional(),
     set_order: z.number().int("Set order must be an integer").nonnegative("Set order must be 0 or greater").optional(),

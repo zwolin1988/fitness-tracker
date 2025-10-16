@@ -54,9 +54,11 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
       {sets.length > 0 && (
         <div className="space-y-2">
           {sets.map((set, index) => {
-            // Walidacja - pola nie mogą być puste (wartość musi być > 0) i muszą być w zakresie
+            // Walidacja:
+            // - Powtórzenia: muszą być > 0 i <= 999
+            // - Ciężar: może być >= 0 (w tym 0), ale nie może być pusty (undefined/null)
             const hasRepetitionsError = set.repetitions <= 0 || set.repetitions > 999;
-            const hasWeightError = set.weight <= 0 || set.weight > 999.99;
+            const hasWeightError = set.weight === undefined || set.weight === null || set.weight < 0 || set.weight > 999.99;
             const isFirstSet = index === 0;
 
             return (
@@ -97,16 +99,17 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                 <div className="flex flex-col">
                   <Input
                     type="number"
-                    min={0.01}
+                    min={0}
                     max={999.99}
                     step={2.5}
                     placeholder="Ciężar (kg)"
-                    value={set.weight || ""}
+                    value={set.weight ?? ""}
                     onChange={(e) => {
                       const updatedSets = [...sets];
+                      const value = e.target.value;
                       updatedSets[index] = {
                         ...updatedSets[index],
-                        weight: parseFloat(e.target.value) || 0,
+                        weight: value === "" ? undefined : parseFloat(value),
                       };
                       onSetsChange(updatedSets);
                     }}
@@ -118,7 +121,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                   />
                   {hasWeightError && (
                     <p className="mt-1 text-xs text-red-500">
-                      Wartość musi być między 0.01 a 999.99 kg.
+                      Wartość musi być od 0 do 999.99 kg (nie może być pusta).
                     </p>
                   )}
                 </div>

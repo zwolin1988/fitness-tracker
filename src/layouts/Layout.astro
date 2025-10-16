@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Navigation from "../components/Navigation.astro";
+import { AppScrollArea } from "../components/layout/AppScrollArea";
 
 interface Props {
   title?: string;
@@ -23,11 +24,13 @@ const { title = "Fitness Tracker", showNavigation = true } = Astro.props;
     <meta name="description" content="Aplikacja do śledzenia treningów i celów fitness" />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-background text-foreground">
+  <body class="bg-background text-foreground overflow-hidden">
     {showNavigation && <Navigation />}
-    <main class="container mx-auto px-4 py-8">
-      <slot />
-    </main>
+    <AppScrollArea client:load>
+      <main class="container mx-auto px-4 py-8">
+        <slot />
+      </main>
+    </AppScrollArea>
   </body>
 </html>
 
@@ -36,6 +39,7 @@ const { title = "Fitness Tracker", showNavigation = true } = Astro.props;
   body {
     margin: 0;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 </style>

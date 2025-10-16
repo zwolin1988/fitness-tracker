@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitTrack - Plan Details</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0b73da",
+            "background-light": "#f5f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            "display": ["Lexend"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-black dark:text-white">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 flex items-center justify-between px-4 sm:px-6 lg:px-10 py-3 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-black/10 dark:border-white/10">
+<div class="flex items-center gap-3">
+<div class="text-primary w-8 h-8">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold">FitTrack</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary font-bold" href="#">Plans</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">History</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button>
+<div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAv9wkv-bbOqUwr9gFCL8PCx2dtY-XHPhkYvOlJitRHmCJAqmtRJ53T3207Im8RyZcUEUTcRjFtP3flDh2zz9znSnoCOCeJGXIseyW2DrqCpPzjHa93S6OXNO6TGwqDGIU3Qs-qKiiQOIIYCmrPmfU9O2s81-kgoOSnitCjsVo8Uf8oxSX9p8BPVoNmloOVP_les4jsBH7dGnaLE2ELFxQRreNbB8fMsmhsKDF6uayw8ihuimTPkUTmHvffDF4D0YxIHeR-fomw40k");'></div>
+</button>
+</div>
+</header>
+<main class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+<div class="space-y-8">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight">Full Body Blast</h2>
+<p class="mt-2 text-black/60 dark:text-white/60">A comprehensive plan targeting all major muscle groups for overall strength and fitness.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="bg-background-light dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg p-5">
+<p class="text-sm text-black/60 dark:text-white/60">Exercises</p>
+<p class="text-3xl font-bold">8</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg p-5">
+<p class="text-sm text-black/60 dark:text-white/60">Total Sets</p>
+<p class="text-3xl font-bold">24</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-lg p-5">
+<p class="text-sm text-black/60 dark:text-white/60">Last Workout</p>
+<p class="text-3xl font-bold">2024-03-15</p>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-2xl font-bold">Exercises</h3>
+<div class="overflow-hidden border border-black/10 dark:border-white/10 rounded-lg">
+<div class="w-full">
+<div class="hidden md:grid md:grid-cols-[auto,1fr,1fr] bg-black/5 dark:bg-white/5 font-medium">
+<div class="px-6 py-3 text-left text-sm"></div>
+<div class="px-6 py-3 text-left text-sm">Exercise</div>
+<div class="px-6 py-3 text-left text-sm">Sets &amp; Reps</div>
+</div>
+<div class="divide-y divide-black/10 dark:divide-white/10">
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCEIo71L2sF6g8rHS6zAh67nT_4RpWPrGywzXKRWVw_m7rYVaGfGkTSf48M6dLpsTr2tSZpXt7uFBbjSGv7UH_-IILDrKKdcc_ghkZ5VqWwdPVeg2C5zrFM1UyfZTubVfqMURxN9zsOzD6FYdwhVfLTY8pC_9kPDXR-UZoEdg8AEh_Xzu94nIGgeBnCy17eYM7Ws_Mtoko_IagdEsFXJUKnOU-iF4CwSA0x6TMRb22zgLfFZ7QTcffuio9nL3z-WGsN3j9bsyycywk");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Squats</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 10 reps</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCninu6jEHbJe-k5sQEEPSu549m8HfnUEPSl6ofO_VKqZMRhL_wnWkH13LNngRQVd0b2LOdq8W2jdxY3dPw9qn4Etg3mULc1GUDwwY5WXIgalPBjm1f7eL0QUo6_qdC4lEkg_yJhuARg8jQB5414_ecDqRHwJDMiZHUyhfqgfHv9a5CaOQnVWvUmXEVc1ZjFxGcGBXxDyRjYsZbmtoNQAkwZgrVR5TUlGqo3hwu0Nzvmhg_DdQV6WhB8qWK_zdkEXOx3j5vGafOtF0");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Bench Press</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 8 reps</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBbS8lAvK2vg1QStIZrPxszuVHSOBY3ylfVA3HyW-o45IDpLGY0WHEjGKNx99A3VM07VCaKvoBCTBWH7uRIVbVM_UID2DsVGx7Xn10GMzMPHVyen9I4wdVr7_g8cq2LvB8UbiVHC2IxufKMYSfcT8EMSJAZ5M1xzL91Ftua6C7UCJWttnGp2Kml65uAVKVqvs126j7DkME8YGgnWiE2YC2I8Z3azYCJNXkjIOuUMRwCpvyLpkQFdJQ8xUmEnt--kGTfz2-RxqxLAnQ");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Overhead Press</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 12 reps</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDueOLbL6VfJ5nLexKu_nGUJoBCQ-jGHMDkub1EowiiPQ4pqxsgeJJbWXtIMzHJGN3hCtOBfTJc3S78a6kTmDFEaUpF_sF37LniRFQi9J5yVm405NPdc56yBASlsFeZ-FJgFdQMSXRhocVkOg2MQ4VUrrcSEC1LVf2VOfa7DZkTYVfL-IY4ovbUEXclNGgEA6VoXm7QwJOhealEraBelvkPwkhXbMNpkXmc-zLj0ksEmQU7NG-UxPnrrAZdVN1hwj8-Cv82DCEEgOs");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Pull-ups</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets to failure</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDShJi_QQlhJz272dtJDVRgx_DU_wvxsXaCC-TZhNuqp8H461iKEz2aw0Qgecd_ExwlKybVJq0cMzakGumK2NOw1Ne9MiCVOlhi5_bq0MQarrV_npYKf_KalJTlAbvy23tg-aRgp5mXz0fep0s15TiWk97RIFKokTsfnNZZ8so0UDbd3rJMEEnEymy_-7zUYN34pQKpEP89ydxn_RubGrCUfjSaZyiJf9ka-Z1xjJvRnC3f1YyjddwcnCcX9WDngdJcYwfd2-drMrE");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Bent-over Rows</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 10 reps</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC-hBf9z3lSuybhOZV1zJz6JOIE7FMiNh3scsRTtPBsjHGb0YngLHa080OUjhBfr4XSkwfH2BwEBDSuoKM32BVyz2Fw-G06K0Zj03DsyzpP4b-ggT6v6ZW9PyaSzXfRzpafl-ltxl7ftXAudf4WcstUUS9G2d6XegM-W0Nu9M_ZvKgeiS1fPEIuJKzIsDsIt50vmea6YeY9kfcO3pg1jqwxzh6XJq1HeCj1g9ooyMIBej6dEWx6XHLFpUE32ipU48h10zxJXdv6icQ");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Plank</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 30 seconds</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBwER7vbxJnVi7ezboXuVSqajvxVlaNMJAuFDhEoXDIPIoWWqAJ56TM1W-fgxS3dDQboWGNcO53GRSf6FOmHn_zqh94kCyicMSDPAxSxMvqTFc91_dXqLHQif_-ptYKk8M1czFRjJPHwWhwbSbmccdQRWPeuFPX5B7XG6lxfz3IcuBJ7rgTEQurk0qbUgjs7NVqzmYIwpb36MBtuVTprJvZ03WN5hE8P-u8e5F5rJ7uo8VbWegpB-XWFQ58oQB52fqQtYv5esv2f5g");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Lunges</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 10 reps per leg</div>
+</div>
+<div class="grid grid-cols-[auto,1fr,1fr] items-center">
+<div class="p-4"><div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOMB4VRoBb9q3CESbVoB_3_TjHFZiGrCKrcf5Pz81cCXUhNt59KHsL4PxIPrijPXiB0S5p8I6f3_1M0uj8nbQVQSN_pTq5KOXlMVan5zCsljLZ1yu-IWHIUh5_4YW87SLB4jaZopf3RwqyaVhHhZuRm8FfSwbmeuO65AFbRTYaWtWuH6Q1ZfueHGhhil9-QBjxhZy6NrwPo6jEvkUfoEREpiFQ6jhyHx6fcKTXyFuvxMw1sY4DRzu_LMWnRGgg7Ub04J8cUis-xhw");'></div></div>
+<div class="px-6 py-4 text-sm font-medium">Bicep Curls</div>
+<div class="px-6 py-4 text-sm text-black/60 dark:text-white/60">3 sets of 12 reps</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 pt-6">
+<button class="flex-1 sm:flex-grow-2 inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded-lg bg-primary hover:bg-primary/90 focus:outline-none">
+                Start Workout
+            </button>
+<button class="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide transition duration-200 rounded-lg border border-black/10 dark:border-white/10 hover:bg-primary/20 dark:hover:bg-primary/30 focus:outline-none">
+                Edit Plan
+            </button>
+<button class="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide transition duration-200 rounded-lg border border-black/10 dark:border-white/10 hover:bg-primary/20 dark:hover:bg-primary/30 focus:outline-none">
+                Duplicate
+            </button>
+<button class="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-red-500 transition duration-200 rounded-lg border border-red-500/30 hover:bg-red-500/10 focus:outline-none">
+                Delete
+            </button>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -1,7 +1,7 @@
 // src/components/training-plan/PlansList.tsx
 // Lista planów treningowych z możliwością dodania nowego
 
-import { Plus } from "lucide-react";
+import { Plus, ChevronRight, Dumbbell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -66,9 +66,26 @@ export function PlansList() {
     window.location.href = "/plans/create";
   }, [plans.length]);
 
+  /**
+   * Formatowanie daty ostatniej sesji (TODO: implementacja po dodaniu workouts)
+   */
+  const formatLastSession = (createdAt: string) => {
+    const date = new Date(createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Dzisiaj";
+    if (diffDays === 1) return "Wczoraj";
+    if (diffDays < 7) return `${diffDays} dni temu`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} tygodni temu`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} miesięcy temu`;
+    return `${Math.floor(diffDays / 365)} lat temu`;
+  };
+
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-4xl">
         <div className="flex h-64 items-center justify-center">
           <p className="text-muted-foreground">Ładowanie planów...</p>
         </div>
@@ -77,15 +94,10 @@ export function PlansList() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-4xl">
       {/* Header z przyciskiem */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">Plany Treningowe</h1>
-          <p className="text-muted-foreground">
-            {plans.length} / 7 {plans.length === 1 ? "plan" : "planów"}
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <h2 className="text-3xl font-bold">Twoje Plany Treningowe</h2>
         <Button onClick={handleNewPlan} disabled={plans.length >= 7}>
           <Plus className="mr-2 h-4 w-4" />
           Nowy plan
@@ -94,7 +106,7 @@ export function PlansList() {
 
       {/* Lista planów */}
       {plans.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center">
+        <div className="bg-card/50 rounded-lg p-8 text-center">
           <p className="text-muted-foreground mb-4">Nie masz jeszcze żadnych planów treningowych</p>
           <Button onClick={handleNewPlan}>
             <Plus className="mr-2 h-4 w-4" />
@@ -102,18 +114,39 @@ export function PlansList() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <div key={plan.id} className="rounded-lg border bg-card p-6 hover:border-primary transition-colors">
-              <h3 className="font-semibold text-lg mb-2">{plan.name}</h3>
-              {plan.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{plan.description}</p>
-              )}
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Utworzono: {new Date(plan.created_at).toLocaleDateString("pl-PL")}</span>
-              </div>
+        <div className="space-y-4">
+          <div className="bg-card/50 rounded-lg p-4">
+            <h3 className="text-lg font-bold mb-4 px-2">
+              Aktywne plany ({plans.length}/7)
+            </h3>
+            <div className="divide-y divide-border">
+              {plans.map((plan) => (
+                <a
+                  key={plan.id}
+                  href={`/plans/${plan.id}`}
+                  className="flex items-center justify-between p-3 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors duration-200"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Ikona */}
+                    <div className="flex items-center justify-center size-12 bg-primary/10 rounded-lg text-primary">
+                      <Dumbbell className="size-6" />
+                    </div>
+
+                    {/* Informacje */}
+                    <div>
+                      <p className="font-semibold">{plan.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Utworzono: {formatLastSession(plan.created_at)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Strzałka */}
+                  <ChevronRight className="size-5 text-muted-foreground" />
+                </a>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       )}
 

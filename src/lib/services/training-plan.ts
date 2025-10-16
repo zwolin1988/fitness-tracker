@@ -362,11 +362,66 @@ export async function updateTrainingPlan(
     // Check ownership
     await checkPlanOwnership(supabase, planId, userId);
 
-    // If exerciseIds provided, validate and update associations
-    if (command.exerciseIds) {
+    // Handle exercises with sets (full replace)
+    if (command.exercises) {
+      const exerciseIds = command.exercises.map((ex) => ex.exerciseId);
+      await validateExercisesExist(supabase, exerciseIds);
+
+      // Delete existing sets and associations
+      await supabase.from("plan_exercise_sets").delete().eq("training_plan_id", planId);
+      await supabase.from("plan_exercises").delete().eq("training_plan_id", planId);
+
+      // Insert new associations
+      const planExercisesData = command.exercises.map((exercise, index) => ({
+        training_plan_id: planId,
+        exercise_id: exercise.exerciseId,
+        order_index: index,
+      }));
+
+      const { error: exercisesError } = await supabase.from("plan_exercises").insert(planExercisesData);
+
+      if (exercisesError) {
+        console.error("Error inserting plan exercises:", exercisesError);
+        throw new TrainingPlanError("Failed to update plan exercises", 500, "INSERT_ERROR");
+      }
+
+      // Insert new sets
+      const allSetsData: {
+        training_plan_id: string;
+        exercise_id: string;
+        set_order: number;
+        repetitions: number;
+        weight: number;
+      }[] = [];
+
+      for (const exercise of command.exercises) {
+        if (exercise.sets && exercise.sets.length > 0) {
+          exercise.sets.forEach((set, index) => {
+            allSetsData.push({
+              training_plan_id: planId,
+              exercise_id: exercise.exerciseId,
+              set_order: set.set_order ?? index,
+              repetitions: set.repetitions,
+              weight: set.weight,
+            });
+          });
+        }
+      }
+
+      if (allSetsData.length > 0) {
+        const { error: setsError } = await supabase.from("plan_exercise_sets").insert(allSetsData);
+
+        if (setsError) {
+          console.error("Error inserting plan exercise sets:", setsError);
+          throw new TrainingPlanError("Failed to update plan sets", 500, "INSERT_ERROR");
+        }
+      }
+    }
+    // Handle simple exerciseIds update (backward compatibility)
+    else if (command.exerciseIds) {
       await validateExercisesExist(supabase, command.exerciseIds);
 
-      // Delete existing associations
+      // Delete existing associations (but keep sets)
       const { error: deleteError } = await supabase.from("plan_exercises").delete().eq("training_plan_id", planId);
 
       if (deleteError) {
@@ -389,14 +444,14 @@ export async function updateTrainingPlan(
       }
     }
 
-    // Build update object
+    // Build update object for basic fields
     const updateData: Partial<Database["public"]["Tables"]["training_plans"]["Update"]> = {
       updated_at: new Date().toISOString(),
     };
     if (command.name !== undefined) updateData.name = command.name;
     if (command.description !== undefined) updateData.description = command.description || null;
 
-    // Update training plan
+    // Update training plan basic info
     const { data: plan, error: updateError } = await supabase
       .from("training_plans")
       .update(updateData)
