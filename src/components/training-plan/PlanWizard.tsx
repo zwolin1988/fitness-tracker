@@ -150,6 +150,15 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
   };
 
   /**
+   * Obsługa usunięcia ćwiczenia w kroku 3
+   * Synchronizuje stan z krokiem 2
+   */
+  const handleExerciseRemoved = (exerciseId: string) => {
+    const updatedIds = state.selectedExerciseIds.filter((id) => id !== exerciseId);
+    saveExercises(updatedIds);
+  };
+
+  /**
    * Obsługa anulowania
    */
   const handleCancel = () => {
@@ -292,6 +301,7 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
               exercises={availableExercises.filter((ex) => state.selectedExerciseIds.includes(ex.id))}
               initialSets={state.setsConfig}
               onSetsConfigured={handleSetsConfigChange}
+              onExerciseRemoved={handleExerciseRemoved}
             />
           )}
         </div>

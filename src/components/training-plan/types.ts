@@ -177,6 +177,7 @@ export interface ExerciseSetConfiguratorProps {
   exercises: ExerciseDTO[];
   initialSets?: Map<string, SetFormData[]>; // dla edycji
   onSetsConfigured: (config: ExerciseSetConfig[]) => void;
+  onExerciseRemoved?: (exerciseId: string) => void; // callback po usunięciu ćwiczenia
 }
 
 /**
@@ -188,6 +189,7 @@ export interface ExerciseSetConfigAccordionProps {
   isExpanded: boolean;
   onToggle: () => void;
   onSetsChange: (sets: SetFormData[]) => void;
+  onRemoveExercise?: () => void; // callback po kliknięciu przycisku usuń ćwiczenie
   dragHandleProps?: Record<string, unknown>; // listeners z useSortable
 }
 

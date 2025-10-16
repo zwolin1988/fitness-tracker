@@ -1,41 +1,54 @@
 // src/components/auth/LogoutButton.tsx
-// Logout button component with Supabase sign out
+// Logout button component using API endpoint
 
-import { createBrowserClient } from "@supabase/ssr";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 
-import type { Database } from "@/db/database.types";
 import { Button } from "@/components/ui/button";
 
-interface LogoutButtonProps {
-  supabaseUrl: string;
-  supabaseKey: string;
-  userName?: string;
-}
-
-export function LogoutButton({ supabaseUrl, supabaseKey, userName }: LogoutButtonProps) {
+/**
+ * Logout button component
+ * Calls /api/auth/logout and redirects to home page
+ */
+export function LogoutButton() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
     setIsLoading(true);
-    try {
-      const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
-      await supabase.auth.signOut();
 
-      // Redirect to home page after logout
-      window.location.href = "/";
-    } catch {
-      // If logout fails, still redirect (clear client state)
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        // Redirect to home page after successful logout
+        window.location.href = "/";
+      } else {
+        // If logout fails, still redirect but show error
+        console.error("Logout failed");
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if request fails, redirect to home
       window.location.href = "/";
     }
   };
 
   return (
-    <div className="flex items-center space-x-4">
-      {userName && <span className="text-sm text-muted-foreground hidden md:inline">Witaj, {userName}</span>}
-      <Button variant="outline" onClick={handleLogout} disabled={isLoading}>
-        {isLoading ? "Wylogowywanie..." : "Wyloguj"}
-      </Button>
-    </div>
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={handleLogout}
+      disabled={isLoading}
+      className="hidden sm:flex items-center gap-2 text-foreground hover:bg-muted"
+    >
+      <LogOut className="size-4" />
+      {isLoading ? "Wylogowywanie..." : "Wyloguj"}
+    </Button>
   );
 }

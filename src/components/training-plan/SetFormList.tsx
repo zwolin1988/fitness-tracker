@@ -2,38 +2,34 @@
 // Lista formularzy serii dla pojedynczego ćwiczenia
 
 import { PlusCircle, Trash2 } from "lucide-react";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { BulkAddSetModal } from "./BulkAddSetModal";
 import type { SetFormData, SetFormListProps } from "./types";
 
 /**
  * Lista formularzy serii dla pojedynczego ćwiczenia
- * Format zgodny z designem: formularz na górze, lista read-only poniżej
+ * Format zgodny z designem: lista edytowalna, bez formularza na górze
  */
 export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps) {
-  const [isBulkAddModalOpen, setIsBulkAddModalOpen] = useState(false);
-  const [newRepetitions, setNewRepetitions] = useState(10);
-  const [newWeight, setNewWeight] = useState(60);
 
   /**
-   * Dodanie nowego seta z formularza
+   * Dodanie nowego seta - kopiuje ostatni set lub dodaje z wartościami domyślnymi
    */
   const handleAddSet = () => {
+    const lastSet = sets[sets.length - 1];
+
+    // Jeśli ostatnia seria ma uzupełnione dane (powtórzenia > 0 i ciężar > 0), skopiuj je
+    const shouldCopy = lastSet && (lastSet.repetitions > 0 && lastSet.weight > 0);
+
     const newSet: SetFormData = {
-      repetitions: newRepetitions,
-      weight: newWeight,
+      repetitions: shouldCopy ? lastSet.repetitions : 1,
+      weight: shouldCopy ? lastSet.weight : 2.5,
       set_order: sets.length,
     };
 
     onSetsChange([...sets, newSet]);
-
-    // Reset formularza do domyślnych wartości
-    setNewRepetitions(10);
-    setNewWeight(60);
   };
 
   /**
@@ -51,70 +47,17 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
     onSetsChange(reorderedSets);
   };
 
-  /**
-   * Obsługa bulk add z modalu
-   */
-  const handleBulkAddConfirm = (newSets: SetFormData[]) => {
-    const updatedSets = [...sets];
-
-    // Dodaj nowe sety z odpowiednimi set_order
-    newSets.forEach((set) => {
-      updatedSets.push({
-        ...set,
-        set_order: updatedSets.length,
-      });
-    });
-
-    onSetsChange(updatedSets);
-    setIsBulkAddModalOpen(false);
-  };
 
   return (
     <div className="space-y-4">
-      {/* Formularz dodawania nowego seta - NA GÓRZE */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-        <div className="flex flex-col">
-          <label htmlFor={`new-reps-${exerciseId}`} className="mb-1.5 text-sm font-medium text-gray-700">
-            Powtórzenia
-          </label>
-          <Input
-            id={`new-reps-${exerciseId}`}
-            type="number"
-            min={1}
-            max={999}
-            value={newRepetitions}
-            onChange={(e) => setNewRepetitions(parseInt(e.target.value) || 0)}
-            placeholder="np. 10"
-            className="h-10 bg-white border-gray-300"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor={`new-weight-${exerciseId}`} className="mb-1.5 text-sm font-medium text-gray-700">
-            Ciężar (kg)
-          </label>
-          <Input
-            id={`new-weight-${exerciseId}`}
-            type="number"
-            min={0}
-            max={999.99}
-            step={2.5}
-            value={newWeight}
-            onChange={(e) => setNewWeight(parseFloat(e.target.value) || 0)}
-            placeholder="np. 60"
-            className="h-10 bg-white border-gray-300"
-          />
-        </div>
-        <Button type="button" variant="default" size="default" onClick={handleAddSet}>
-          Dodaj
-        </Button>
-      </div>
-
       {/* Lista dodanych setów - EDYTOWALNE */}
       {sets.length > 0 && (
         <div className="space-y-2">
           {sets.map((set, index) => {
-            const hasRepetitionsError = set.repetitions < 1 || set.repetitions > 999;
-            const hasWeightError = set.weight < 0 || set.weight > 999.99;
+            // Walidacja - pola nie mogą być puste (wartość musi być > 0) i muszą być w zakresie
+            const hasRepetitionsError = set.repetitions <= 0 || set.repetitions > 999;
+            const hasWeightError = set.weight <= 0 || set.weight > 999.99;
+            const isFirstSet = index === 0;
 
             return (
               <div
@@ -128,6 +71,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                     type="number"
                     min={1}
                     max={999}
+                    placeholder="Powtórzenia"
                     value={set.repetitions || ""}
                     onChange={(e) => {
                       const updatedSets = [...sets];
@@ -145,9 +89,7 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                   />
                   {hasRepetitionsError && (
                     <p className="mt-1 text-xs text-red-500">
-                      {set.repetitions === 0 || !set.repetitions
-                        ? "To pole jest wymagane."
-                        : "Wartość musi być między 1 a 999."}
+                      Wartość musi być między 1 a 999.
                     </p>
                   )}
                 </div>
@@ -155,9 +97,10 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                 <div className="flex flex-col">
                   <Input
                     type="number"
-                    min={0}
+                    min={0.01}
                     max={999.99}
                     step={2.5}
+                    placeholder="Ciężar (kg)"
                     value={set.weight || ""}
                     onChange={(e) => {
                       const updatedSets = [...sets];
@@ -175,47 +118,43 @@ export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps
                   />
                   {hasWeightError && (
                     <p className="mt-1 text-xs text-red-500">
-                      {set.weight < 0 ? "Wartość musi być większa lub równa 0." : "Wartość musi być między 0 a 999.99."}
+                      Wartość musi być między 0.01 a 999.99 kg.
                     </p>
                   )}
                 </div>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveSet(index)}
-                  className="h-7 w-7 text-muted-foreground hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 mt-1"
-                  aria-label={`Usuń set ${index + 1}`}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                {!isFirstSet && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveSet(index)}
+                    className="h-7 w-7 text-muted-foreground hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 mt-1"
+                    aria-label={`Usuń set ${index + 1}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+                {isFirstSet && <div className="w-7" />}
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Przycisk bulk add - z przerywaną ramką */}
+      {/* Przycisk do dodawania serii */}
       <div className="border-t border-primary/20 pt-4 dark:border-primary/30">
         <Button
           type="button"
-          variant="dashed"
+          variant="default"
           size="default"
-          onClick={() => setIsBulkAddModalOpen(true)}
+          onClick={handleAddSet}
           className="w-full"
         >
           <PlusCircle className="h-5 w-5" />
-          Dodaj serie hurtowo
+          Dodaj serię
         </Button>
       </div>
-
-      {/* Bulk Add Modal */}
-      <BulkAddSetModal
-        isOpen={isBulkAddModalOpen}
-        onClose={() => setIsBulkAddModalOpen(false)}
-        onConfirm={handleBulkAddConfirm}
-      />
     </div>
   );
 }

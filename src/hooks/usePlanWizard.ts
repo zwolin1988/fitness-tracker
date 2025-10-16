@@ -98,7 +98,7 @@ export function usePlanWizard({ mode, planId, initialData, initialStep = 1 }: Us
           return state.selectedExerciseIds.length > 0;
 
         case 3:
-          // Walidacja kroku 3: każde ćwiczenie ma co najmniej 1 poprawny set
+          // Walidacja kroku 3: każde ćwiczenie ma co najmniej 1 set z wypełnionymi danymi
           if (state.selectedExerciseIds.length === 0) return false;
 
           for (const exerciseId of state.selectedExerciseIds) {
@@ -107,10 +107,10 @@ export function usePlanWizard({ mode, planId, initialData, initialStep = 1 }: Us
             // Każde ćwiczenie musi mieć co najmniej 1 set
             if (sets.length === 0) return false;
 
-            // Każdy set musi być poprawnie wypełniony
+            // Każdy set musi mieć wypełnione powtórzenia (>0) i ciężar (>0) w zakresie
             for (const set of sets) {
-              if (set.repetitions < 1 || set.repetitions > 999) return false;
-              if (set.weight < 0 || set.weight > 999.99) return false;
+              if (set.repetitions <= 0 || set.repetitions > 999) return false;
+              if (set.weight <= 0 || set.weight > 999.99) return false;
             }
           }
 

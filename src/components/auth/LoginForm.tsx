@@ -1,70 +1,166 @@
 // src/components/auth/LoginForm.tsx
 // Login form component with Supabase authentication
 
-import { createBrowserClient } from "@supabase/ssr";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 
-import type { Database } from "@/db/database.types";
 import { LoginSchema } from "@/lib/schemas/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface LoginFormProps {
-  supabaseUrl: string;
-  supabaseKey: string;
+  /**
+   * URL docelowy po zalogowaniu (opcjonalny, domyślnie /dashboard)
+   */
+  redirectUrl?: string;
 }
 
-export function LoginForm({ supabaseUrl, supabaseKey }: LoginFormProps) {
+interface LoginFormErrors {
+  email?: string;
+  password?: string;
+}
+
+/**
+ * Formularz logowania
+ * Integracja z Supabase Auth przez API endpoint /api/auth/login
+ */
+export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<LoginFormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [globalError, setGlobalError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Walidacja pola email
+   */
+  const validateEmail = (email: string): string | undefined => {
+    const result = LoginSchema.shape.email.safeParse(email);
+    return result.success ? undefined : result.error.errors[0].message;
+  };
+
+  /**
+   * Walidacja pola hasło
+   */
+  const validatePassword = (password: string): string | undefined => {
+    const result = LoginSchema.shape.password.safeParse(password);
+    return result.success ? undefined : result.error.errors[0].message;
+  };
+
+  /**
+   * Walidacja całego formularza
+   */
+  const validateForm = (): boolean => {
+    const newErrors: LoginFormErrors = {
+      email: validateEmail(email),
+      password: validatePassword(password),
+    };
+
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.password;
+  };
+
+  /**
+   * Obsługa zmiany email
+   */
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setGlobalError("");
+
+    if (touched.email) {
+      setErrors((prev) => ({
+        ...prev,
+        email: validateEmail(newEmail),
+      }));
+    }
+  };
+
+  /**
+   * Obsługa zmiany hasła
+   */
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setGlobalError("");
+
+    if (touched.password) {
+      setErrors((prev) => ({
+        ...prev,
+        password: validatePassword(newPassword),
+      }));
+    }
+  };
+
+  /**
+   * Obsługa blur (oznaczenie pola jako dotknięte)
+   */
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    if (field === "email") {
+      setErrors((prev) => ({
+        ...prev,
+        email: validateEmail(email),
+      }));
+    } else if (field === "password") {
+      setErrors((prev) => ({
+        ...prev,
+        password: validatePassword(password),
+      }));
+    }
+  };
+
+  /**
+   * Obsługa submit formularza
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setGlobalError("");
+    setTouched({ email: true, password: true });
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Validate form data
-      const validationResult = LoginSchema.safeParse({ email, password });
-
-      if (!validationResult.success) {
-        const firstError = validationResult.error.errors[0];
-        setError(firstError.message);
-        setIsLoading(false);
-        return;
-      }
-
-      // Create Supabase browser client with cookie support
-      const supabase = createBrowserClient<Database>(supabaseUrl, supabaseKey);
-
-      // Attempt login
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email: validationResult.data.email,
-        password: validationResult.data.password,
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (loginError) {
-        setError(
-          loginError.message === "Invalid login credentials" ? "Nieprawidłowy email lub hasło" : loginError.message
-        );
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle validation errors (422)
+        if (response.status === 422 && data.details) {
+          const fieldErrors: LoginFormErrors = {};
+          if (data.details.email) fieldErrors.email = data.details.email[0];
+          if (data.details.password) fieldErrors.password = data.details.password[0];
+          setErrors(fieldErrors);
+          setIsLoading(false);
+          return;
+        }
+
+        // Handle other errors (401, 400, 500)
+        setGlobalError(data.error || "Wystąpił błąd podczas logowania");
         setIsLoading(false);
         return;
       }
 
-      if (!data.session) {
-        setError("Nie udało się utworzyć sesji");
-        setIsLoading(false);
-        return;
-      }
-
-      // Successful login - redirect to dashboard
-      window.location.href = "/dashboard";
+      // Success - redirect to target URL
+      window.location.href = redirectUrl;
     } catch {
-      setError("Wystąpił nieoczekiwany błąd. Spróbuj ponownie.");
+      setGlobalError("Wystąpił nieoczekiwany błąd. Sprawdź połączenie z internetem i spróbuj ponownie.");
       setIsLoading(false);
     }
   };
@@ -72,46 +168,89 @@ export function LoginForm({ supabaseUrl, supabaseKey }: LoginFormProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Logowanie</CardTitle>
+        <CardTitle className="text-2xl">Logowanie</CardTitle>
         <CardDescription>Zaloguj się do swojego konta Fitness Tracker</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Globalny błąd */}
+          {globalError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{globalError}</AlertDescription>
+            </Alert>
+          )}
 
+          {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="font-medium text-foreground">
+              Email <span className="text-primary">*</span>
+            </Label>
             <Input
               id="email"
               type="email"
               placeholder="twoj@email.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
+              onBlur={() => handleBlur("email")}
               disabled={isLoading}
-              required
+              className={`h-12 ${errors.email && touched.email ? "border-destructive" : ""}`}
+              aria-invalid={errors.email && touched.email ? "true" : "false"}
+              aria-describedby={errors.email && touched.email ? "email-error" : undefined}
             />
+            {errors.email && touched.email && (
+              <p id="email-error" className="text-sm text-destructive">
+                {errors.email}
+              </p>
+            )}
           </div>
 
+          {/* Hasło */}
           <div className="space-y-2">
-            <Label htmlFor="password">Hasło</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="font-medium text-foreground">
+                Hasło <span className="text-primary">*</span>
+              </Label>
+              <a href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+                Zapomniałeś hasła?
+              </a>
+            </div>
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
+              onBlur={() => handleBlur("password")}
               disabled={isLoading}
-              required
+              className={`h-12 ${errors.password && touched.password ? "border-destructive" : ""}`}
+              aria-invalid={errors.password && touched.password ? "true" : "false"}
+              aria-describedby={errors.password && touched.password ? "password-error" : undefined}
             />
+            {errors.password && touched.password && (
+              <p id="password-error" className="text-sm text-destructive">
+                {errors.password}
+              </p>
+            )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logowanie..." : "Zaloguj się"}
+          {/* Przycisk submit */}
+          <Button type="submit" className="w-full h-12" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Logowanie...
+              </>
+            ) : (
+              "Zaloguj się"
+            )}
           </Button>
 
+          {/* Link do rejestracji */}
           <div className="text-center text-sm text-muted-foreground">
-            <a href="/auth/register" className="text-primary hover:underline">
-              Nie masz konta? Zarejestruj się
+            Nie masz konta?{" "}
+            <a href="/auth/register" className="text-primary hover:underline font-medium">
+              Zarejestruj się
             </a>
           </div>
         </form>

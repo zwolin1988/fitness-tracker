@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Dropdown</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0b73da",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              "display": ["Lexend"]
+            },
+            borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display flex items-center justify-center min-h-screen">
+<div class="w-80 rounded-lg bg-background-light dark:bg-background-dark shadow-lg border border-primary/20 dark:border-primary/30 p-2">
+<div class="flex items-center gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDxLMftITSnEgyt8K5hIQVHhq6mZ235oNHaD02p25UyXWY3IaZxqtactfV5B3evFVub5-oFA2OcMnK2-ONaGMn-TR9gCHc8w5Xgwb8euewBwKNo6aetz5G8wu4uHt3fS_kHvm3zRgiO5QLYnUZefdyLMcGg6HPQ5qYJrHtmyIoQGFNbCRPRaDqJDOwpiT1kx36warffJ0PAYnMOqN-GehPzvT5Q6ucc4VgYuZ_00qQFxvIdYJ3fy2b6zgoeIjcjMfoKcOf4FKEVUBw");'></div>
+<div class="flex-1">
+<p class="text-sm font-medium text-black dark:text-white truncate">Alex Kowalski</p>
+<p class="text-xs text-black/60 dark:text-white/60 truncate">alex.kowalski@example.com</p>
+</div>
+</div>
+<div class="h-px bg-primary/20 dark:bg-primary/30 my-1"></div>
+<a class="flex items-center gap-3 p-2 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors duration-200" href="/profile">
+<span class="material-symbols-outlined text-black dark:text-white text-xl">person</span>
+<span class="text-sm text-black dark:text-white">Profil</span>
+</a>
+<a class="flex items-center gap-3 p-2 rounded hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors duration-200" href="/auth/login">
+<span class="material-symbols-outlined text-black dark:text-white text-xl">logout</span>
+<span class="text-sm text-black dark:text-white">Wyloguj</span>
+</a>
+</div>
+</body></html>
