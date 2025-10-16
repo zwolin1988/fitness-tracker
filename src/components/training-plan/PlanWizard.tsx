@@ -28,6 +28,8 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
   const [isLoadingExercises, setIsLoadingExercises] = useState(true);
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [draft, setDraft] = useState<PlanDraft | null>(null);
+  const [loadedInitialData, setLoadedInitialData] = useState<any>(null);
+  const [isLoadingPlan, setIsLoadingPlan] = useState(mode === "edit" && !initialData);
 
   // Hooki
   const {
@@ -40,10 +42,47 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
     saveSetsConfig,
     canProceedToNextStep,
     isStepValid,
-  } = usePlanWizard({ mode, planId, initialData, initialStep });
+  } = usePlanWizard({ mode, planId, initialData: initialData || loadedInitialData, initialStep });
 
   const { loadDraft, clearDraft } = useDraftRecovery(state, mode === "create");
   const { submitPlan, isSubmitting, error: submitError } = usePlanSubmit();
+
+  /**
+   * Ładowanie danych planu w trybie edycji
+   */
+  useEffect(() => {
+    if (mode === "edit" && planId && !initialData) {
+      const fetchPlanData = async () => {
+        try {
+          const response = await fetch(`/api/plans/${planId}`, {
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              toast.error("Plan nie został znaleziony");
+            } else if (response.status === 403) {
+              toast.error("Nie masz dostępu do tego planu");
+            } else {
+              toast.error("Nie udało się pobrać danych planu");
+            }
+            window.location.href = "/plans";
+            return;
+          }
+
+          const data = await response.json();
+          setLoadedInitialData(data);
+        } catch {
+          toast.error("Wystąpił błąd podczas ładowania planu");
+          window.location.href = "/plans";
+        } finally {
+          setIsLoadingPlan(false);
+        }
+      };
+
+      fetchPlanData();
+    }
+  }, [mode, planId, initialData]);
 
   /**
    * Ładowanie ćwiczeń i kategorii przy mount
@@ -180,46 +219,95 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
       return;
     }
 
-    // Przygotowanie command dla API
-    const exercises = state.selectedExerciseIds.map((exerciseId) => {
-      const sets = state.setsConfig.get(exerciseId) || [];
-      return {
-        exerciseId,
-        sets: sets.map((set) => ({
-          repetitions: set.repetitions,
-          weight: set.weight,
-          set_order: set.set_order,
-        })),
-      };
-    });
-
-    const command = {
-      name: state.basics.name,
-      description: state.basics.description,
-      exercises,
-    };
-
-    // TODO: Obsługa edycji (mode='edit') - PUT /api/plans/{id} + sets CRUD
-    // W MVP skupiamy się na tworzeniu nowych planów
-    if (mode === "edit") {
-      toast.error("Edycja planów będzie dostępna wkrótce");
-      return;
-    }
-
     // Wywołanie API
-    const result = await submitPlan(command);
+    let result;
+    if (mode === "edit" && planId) {
+      // PUT /api/plans/{id}
+      // Note: The PUT endpoint only updates basic info + exerciseIds
+      // Sets are managed through separate endpoints in a full implementation
+      // For MVP, we'll recreate the plan structure
+      try {
+        // Prepare exercises with sets for create-like structure
+        const exercises = state.selectedExerciseIds.map((exerciseId) => {
+          const sets = state.setsConfig.get(exerciseId) || [];
+          return {
+            exerciseId,
+            sets: sets.map((set) => ({
+              repetitions: set.repetitions,
+              weight: set.weight,
+              set_order: set.set_order,
+            })),
+          };
+        });
+
+        const command = {
+          name: state.basics.name,
+          description: state.basics.description,
+          exercises,
+        };
+
+        const response = await fetch(`/api/plans/${planId}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(command),
+        });
+
+        if (!response.ok) {
+          throw new Error("Nie udało się zaktualizować planu");
+        }
+
+        result = await response.json();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Wystąpił błąd podczas aktualizacji planu");
+        return;
+      }
+    } else {
+      // POST /api/plans (create)
+      const exercises = state.selectedExerciseIds.map((exerciseId) => {
+        const sets = state.setsConfig.get(exerciseId) || [];
+        return {
+          exerciseId,
+          sets: sets.map((set) => ({
+            repetitions: set.repetitions,
+            weight: set.weight,
+            set_order: set.set_order,
+          })),
+        };
+      });
+
+      const command = {
+        name: state.basics.name,
+        description: state.basics.description,
+        exercises,
+      };
+
+      result = await submitPlan(command);
+    }
 
     if (result) {
       // Success
-      toast.success(`Plan "${state.basics.name}" został utworzony`);
-      clearDraft();
+      const successMessage = mode === "edit"
+        ? `Plan "${state.basics.name}" został zaktualizowany`
+        : `Plan "${state.basics.name}" został utworzony`;
+      toast.success(successMessage);
+
+      if (mode === "create") {
+        clearDraft();
+      }
 
       // Wywołaj callback lub redirect
       if (onSuccess) {
         onSuccess();
       } else {
         setTimeout(() => {
-          window.location.href = "/plans";
+          if (mode === "edit" && planId) {
+            window.location.href = `/plans/${planId}`;
+          } else {
+            window.location.href = "/plans";
+          }
         }, 500);
       }
     } else if (submitError) {
@@ -228,10 +316,13 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
     }
   };
 
-  if (isLoadingExercises) {
+  if (isLoadingExercises || isLoadingPlan) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="ml-3 text-muted-foreground">
+          {isLoadingPlan ? "Ładowanie danych planu..." : "Ładowanie..."}
+        </p>
       </div>
     );
   }
@@ -330,10 +421,10 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Zapisywanie...
+                    {mode === "edit" ? "Aktualizowanie..." : "Zapisywanie..."}
                   </>
                 ) : (
-                  <>Zapisz plan</>
+                  <>{mode === "edit" ? "Zaktualizuj plan" : "Zapisz plan"}</>
                 )}
               </Button>
             )}

@@ -107,10 +107,12 @@ export function usePlanWizard({ mode, planId, initialData, initialStep = 1 }: Us
             // Każde ćwiczenie musi mieć co najmniej 1 set
             if (sets.length === 0) return false;
 
-            // Każdy set musi mieć wypełnione powtórzenia (>0) i ciężar (>0) w zakresie
+            // Każdy set musi mieć:
+            // - Powtórzenia: > 0 i <= 999
+            // - Ciężar: >= 0 (w tym 0) i <= 999.99, ale nie może być pusty (undefined/null)
             for (const set of sets) {
               if (set.repetitions <= 0 || set.repetitions > 999) return false;
-              if (set.weight <= 0 || set.weight > 999.99) return false;
+              if (set.weight === undefined || set.weight === null || set.weight < 0 || set.weight > 999.99) return false;
             }
           }
 

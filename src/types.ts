@@ -117,10 +117,12 @@ export interface CreateTrainingPlanCommand {
 }
 
 // Command to update an existing training plan.
+// Supports both simple exerciseIds update and full exercises with sets
 export interface UpdateTrainingPlanCommand {
   name?: string;
   description?: string;
   exerciseIds?: string[];
+  exercises?: PlanExerciseInput[];
 }
 
 /* ================================
