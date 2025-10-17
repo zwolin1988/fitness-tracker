@@ -112,7 +112,13 @@ export function BulkAddSetModal({ isOpen, onClose, onConfirm }: BulkAddSetModalP
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }} modal>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      modal
+    >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Dodaj wiele serii</DialogTitle>

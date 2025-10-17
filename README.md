@@ -54,13 +54,13 @@ Built with modern technologies including Astro 5, React 19, TypeScript, and Supa
 - **[DigitalOcean](https://www.digitalocean.com/)** - Docker-based hosting for scalability and performance
 
 ### Testing & Code Quality
-- **Jest** - Unit testing framework
-- **React Testing Library** - React component testing
-- **Cypress** - End-to-end testing
-- **ESLint** - Code linting with TypeScript support
-- **Prettier** - Code formatting
-- **Husky** - Git hooks for pre-commit quality checks
-- **lint-staged** - Run linters on staged files
+- **[Vitest](https://vitest.dev/)** - Fast unit testing framework with native TypeScript support
+- **[React Testing Library](https://testing-library.com/react)** - React component testing with user-centric approach
+- **[Playwright](https://playwright.dev/)** - Modern end-to-end testing across multiple browsers
+- **[ESLint 9](https://eslint.org/)** - Code linting with TypeScript and React Compiler support
+- **[Prettier](https://prettier.io/)** - Opinionated code formatting
+- **[Husky](https://typicode.github.io/husky/)** - Git hooks for pre-commit quality checks
+- **[lint-staged](https://github.com/okonet/lint-staged)** - Run linters on staged files only
 
 ## Getting Started Locally
 
@@ -165,21 +165,135 @@ For detailed schema documentation, see [.ai/db-plan.md](.ai/db-plan.md)
 
 ## Available Scripts
 
+### Development
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start the development server with hot-reload |
 | `npm run build` | Build the application for production |
 | `npm run preview` | Preview the production build locally |
 | `npm run astro` | Run Astro CLI commands |
+
+### Code Quality
+| Command | Description |
+|---------|-------------|
 | `npm run lint` | Run ESLint to check for code issues |
 | `npm run lint:fix` | Automatically fix ESLint issues |
 | `npm run format` | Format code with Prettier |
+
+### Testing
+
+#### Unit Tests (Vitest)
+| Command | Description |
+|---------|-------------|
+| `npm run test` | Run unit tests in watch mode |
+| `npm run test:ui` | Open Vitest UI for interactive testing |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run test:watch` | Run tests in watch mode (explicit) |
+
+**Configuration**: Tests are configured in `vitest.config.ts` with:
+- **Environment**: jsdom for DOM testing
+- **Coverage**: 75% threshold for lines, functions, branches, and statements
+- **Setup**: Global test utilities in `src/test/setup.ts`
+
+**Writing Unit Tests**:
+```typescript
+// Example: src/lib/utils.test.ts
+import { describe, it, expect } from 'vitest';
+import { cn } from './utils';
+
+describe('cn utility function', () => {
+  it('should merge class names correctly', () => {
+    const result = cn('text-red-500', 'bg-blue-500');
+    expect(result).toBe('text-red-500 bg-blue-500');
+  });
+});
+```
+
+#### End-to-End Tests (Playwright)
+| Command | Description |
+|---------|-------------|
+| `npm run test:e2e` | Run E2E tests in headless mode |
+| `npm run test:e2e:ui` | Open Playwright UI for interactive debugging |
+| `npm run test:e2e:debug` | Run tests in debug mode with inspector |
+| `npm run test:e2e:headed` | Run tests in headed mode (visible browser) |
+| `npm run test:e2e:report` | Show HTML test report |
+
+**Configuration**: Tests are configured in `playwright.config.ts` with:
+- **Browser**: Chromium (Desktop Chrome)
+- **Base URL**: http://localhost:4321
+- **Auto-start**: Development server starts automatically
+- **Artifacts**: Screenshots and videos on failure
+
+**Writing E2E Tests**:
+```typescript
+// Example: e2e/example.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('should load homepage successfully', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Fitness Tracker/i);
+});
+```
+
+**Page Object Model**: Organize tests using page objects in `e2e/page-objects/`:
+```typescript
+// Example: e2e/page-objects/LoginPage.ts
+import { Page, Locator } from '@playwright/test';
+
+export class LoginPage {
+  readonly page: Page;
+  readonly emailInput: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.emailInput = page.locator('input[name="email"]');
+  }
+
+  async login(email: string, password: string) {
+    await this.emailInput.fill(email);
+    // ...
+  }
+}
+```
+
+#### All Tests
+| Command | Description |
+|---------|-------------|
+| `npm run test:all` | Run unit tests with coverage + E2E tests |
 
 ### Pre-commit Hooks
 
 This project uses Husky and lint-staged to ensure code quality:
 - Automatically runs ESLint on `.ts`, `.tsx`, and `.astro` files
 - Automatically formats `.json`, `.css`, and `.md` files with Prettier
+
+## Testing Strategy
+
+The project follows a comprehensive testing strategy to ensure code quality:
+
+1. **Unit Tests** (Vitest + React Testing Library)
+   - Test individual functions, utilities, and components
+   - Located next to source files with `.test.ts` or `.test.tsx` extension
+   - Run automatically on file changes in development
+   - Target: 75%+ code coverage
+
+2. **Integration Tests** (Vitest)
+   - Test interaction between components and modules
+   - Mock external dependencies (Supabase, APIs)
+   - Verify data flow and state management
+
+3. **End-to-End Tests** (Playwright)
+   - Test complete user workflows
+   - Run against real application in browser
+   - Cover critical paths: authentication, workout creation, data visualization
+   - Run before deployments
+
+4. **Visual Regression Tests** (Playwright Screenshots)
+   - Catch unintended UI changes
+   - Compare screenshots against baseline
+   - Run on key pages and components
+
+For detailed testing documentation, see [.ai/test-plan.md](.ai/test-plan.md)
 
 ## Project Scope
 
