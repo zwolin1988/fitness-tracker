@@ -60,15 +60,19 @@ function SortableExerciseItem({
 /**
  * Główny komponent konfiguracji serii dla wybranych ćwiczeń
  */
-export function ExerciseSetConfigurator({ exercises, initialSets, onSetsConfigured, onExerciseRemoved }: ExerciseSetConfiguratorProps) {
+export function ExerciseSetConfigurator({
+  exercises,
+  initialSets,
+  onSetsConfigured,
+  onExerciseRemoved,
+}: ExerciseSetConfiguratorProps) {
   // Inicjalizacja stanu z exercisesWithSets
   const [exercisesWithSets, setExercisesWithSets] = useState<ExerciseWithSets[]>(() => {
     return exercises.map((exercise, index) => {
       const existingSets = initialSets?.get(exercise.id);
       // Jeśli nie ma żadnych serii, dodaj jedną serię z domyślnymi wartościami
-      const sets = existingSets && existingSets.length > 0
-        ? existingSets
-        : [{ repetitions: 1, weight: 2.5, set_order: 0 }];
+      const sets =
+        existingSets && existingSets.length > 0 ? existingSets : [{ repetitions: 1, weight: 2.5, set_order: 0 }];
 
       return {
         exercise,

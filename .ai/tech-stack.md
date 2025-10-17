@@ -16,6 +16,21 @@
 - Openrouter.ai: Umożliwia komunikację z modelami AI, oferując dostęp do szerokiej gamy modeli (OpenAI, Anthropic, Google i wielu innych).
   - Pozwala na ustawianie limitów finansowych dla kluczy API, co zapewnia kontrolę nad kosztami
 
+## Testy
+- **Vitest 2.x**: Framework do testów jednostkowych i integracyjnych z natywnym wsparciem TypeScript i ESM
+  - Szybkie wykonanie testów dzięki Vite
+  - Kompatybilny API z Jest
+  - Wbudowane code coverage (c8)
+- **React Testing Library 16.x**: Testowanie komponentów React z perspektywy użytkownika
+  - User-centric testing approach
+  - Integracja z Vitest
+  - Custom matchers dla DOM (@testing-library/jest-dom)
+- **Playwright 1.50+**: Nowoczesne testy end-to-end i wydajnościowe
+  - Wsparcie dla Chrome, Firefox, Safari, Edge
+  - Testy cross-browser i multi-device
+  - Performance testing API
+  - Screenshot i video recording
+
 ## CI/CD i Hosting
-- GitHub Actions: Automatyzuje proces budowy pipeline’ów CI/CD, co przyspiesza wdrażanie zmian.
+- GitHub Actions: Automatyzuje proces budowy pipeline'ów CI/CD, co przyspiesza wdrażanie zmian.
 - DigitalOcean: Hostowanie aplikacji za pośrednictwem obrazów Docker, gwarantujące skalowalność oraz wydajność.

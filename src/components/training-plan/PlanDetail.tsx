@@ -217,9 +217,7 @@ export function PlanDetail({ planId }: PlanDetailProps) {
           {/* Rows */}
           <div className="divide-y">
             {exercisesWithSets.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground">
-                Ten plan nie zawiera jeszcze żadnych ćwiczeń
-              </div>
+              <div className="p-8 text-center text-muted-foreground">Ten plan nie zawiera jeszcze żadnych ćwiczeń</div>
             ) : (
               exercisesWithSets.map(({ exercise, setsDescription }) => (
                 <div key={exercise.id} className="grid grid-cols-[auto,1fr,1fr] items-center hover:bg-muted/50">

@@ -116,9 +116,7 @@ export function PlansList() {
       ) : (
         <div className="space-y-4">
           <div className="bg-card/50 rounded-lg p-4">
-            <h3 className="text-lg font-bold mb-4 px-2">
-              Aktywne plany ({plans.length}/7)
-            </h3>
+            <h3 className="text-lg font-bold mb-4 px-2">Aktywne plany ({plans.length}/7)</h3>
             <div className="divide-y divide-border">
               {plans.map((plan) => (
                 <a
@@ -135,9 +133,7 @@ export function PlansList() {
                     {/* Informacje */}
                     <div>
                       <p className="font-semibold">{plan.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Utworzono: {formatLastSession(plan.created_at)}
-                      </p>
+                      <p className="text-sm text-muted-foreground">Utworzono: {formatLastSession(plan.created_at)}</p>
                     </div>
                   </div>
 

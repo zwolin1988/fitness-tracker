@@ -112,7 +112,8 @@ export function usePlanWizard({ mode, planId, initialData, initialStep = 1 }: Us
             // - Ciężar: >= 0 (w tym 0) i <= 999.99, ale nie może być pusty (undefined/null)
             for (const set of sets) {
               if (set.repetitions <= 0 || set.repetitions > 999) return false;
-              if (set.weight === undefined || set.weight === null || set.weight < 0 || set.weight > 999.99) return false;
+              if (set.weight === undefined || set.weight === null || set.weight < 0 || set.weight > 999.99)
+                return false;
             }
           }
 

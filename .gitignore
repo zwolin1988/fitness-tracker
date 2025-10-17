@@ -25,3 +25,11 @@ pnpm-debug.log*
 supabase/migrations/20251014130400_create_auth_users.sql
 .gitignore
 supabase/migrations/20251014130500_add_test_users.sql
+
+# testing
+coverage/
+.vitest/
+playwright-report/
+test-results/
+playwright/.cache/
+*.spec.ts-snapshots/

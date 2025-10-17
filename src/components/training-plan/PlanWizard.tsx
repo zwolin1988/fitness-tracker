@@ -289,9 +289,10 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
 
     if (result) {
       // Success
-      const successMessage = mode === "edit"
-        ? `Plan "${state.basics.name}" został zaktualizowany`
-        : `Plan "${state.basics.name}" został utworzony`;
+      const successMessage =
+        mode === "edit"
+          ? `Plan "${state.basics.name}" został zaktualizowany`
+          : `Plan "${state.basics.name}" został utworzony`;
       toast.success(successMessage);
 
       if (mode === "create") {
@@ -320,9 +321,7 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <p className="ml-3 text-muted-foreground">
-          {isLoadingPlan ? "Ładowanie danych planu..." : "Ładowanie..."}
-        </p>
+        <p className="ml-3 text-muted-foreground">{isLoadingPlan ? "Ładowanie danych planu..." : "Ładowanie..."}</p>
       </div>
     );
   }
