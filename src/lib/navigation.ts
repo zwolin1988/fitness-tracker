@@ -74,9 +74,7 @@ export function isUserAdmin(profile: UserProfile | null): boolean {
  * Get complete navigation state for the current user
  * Combines user session and profile data
  */
-export async function getNavigationState(
-  supabase: SupabaseClient | null
-): Promise<NavigationState> {
+export async function getNavigationState(supabase: SupabaseClient | null): Promise<NavigationState> {
   // Default state for no supabase client
   if (!supabase) {
     return {
@@ -125,9 +123,7 @@ export function getMobileMenuId(isLoggedIn: boolean): string {
  */
 export function getNavigationClass(isAdmin: boolean): string {
   const baseClass = "border-b border-border sticky top-0 z-50";
-  const bgClass = isAdmin
-    ? "bg-gradient-to-r from-primary/10 to-primary/5"
-    : "bg-background";
+  const bgClass = isAdmin ? "bg-gradient-to-r from-primary/10 to-primary/5" : "bg-background";
 
   return `${baseClass} ${bgClass}`;
 }

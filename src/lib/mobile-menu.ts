@@ -104,11 +104,7 @@ export function setupMobileMenu(): void {
   document.addEventListener("click", (event) => {
     const target = event.target as Node;
 
-    if (
-      isMobileMenuOpen(mobileMenu) &&
-      !mobileMenu.contains(target) &&
-      !menuButton.contains(target)
-    ) {
+    if (isMobileMenuOpen(mobileMenu) && !mobileMenu.contains(target) && !menuButton.contains(target)) {
       closeMobileMenu(mobileMenu);
     }
   });

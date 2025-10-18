@@ -4,13 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  toggleMobileMenu,
-  closeMobileMenu,
-  openMobileMenu,
-  isMobileMenuOpen,
-  setupMobileMenu,
-} from "./mobile-menu";
+import { toggleMobileMenu, closeMobileMenu, openMobileMenu, isMobileMenuOpen, setupMobileMenu } from "./mobile-menu";
 
 describe("Mobile Menu Utilities", () => {
   let mockMenuElement: HTMLElement;

@@ -6,9 +6,7 @@ import { UserDropdown } from "@/components/auth/UserDropdown";
 import { getNavigationState, getNavigationClass } from "@/lib/navigation";
 
 // Get navigation state (user, profile, admin status)
-const { user, profile, isAdmin, isLoggedIn } = await getNavigationState(
-  Astro.locals.supabase
-);
+const { user, profile, isAdmin, isLoggedIn } = await getNavigationState(Astro.locals.supabase);
 
 // Generate navigation classes based on admin status
 const navClass = getNavigationClass(isAdmin);
@@ -192,8 +190,5 @@ const navClass = getNavigationClass(isAdmin);
 </nav>
 
 <script>
-  import { setupMobileMenu } from "@/lib/mobile-menu";
-
-  // Setup mobile menu with enhanced accessibility
-  setupMobileMenu();
+  import { setupMobileMenu } from "@/lib/mobile-menu"; // Setup mobile menu with enhanced accessibility setupMobileMenu();
 </script>
