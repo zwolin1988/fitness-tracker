@@ -245,11 +245,12 @@ export async function createTrainingPlan(
   command: CreateTrainingPlanCommand
 ): Promise<TrainingPlanDTO> {
   try {
-    // Check max plans limit (7 plans per user)
+    // Check max plans limit (7 plans per user, excluding soft-deleted)
     const { count, error: countError } = await supabase
       .from("training_plans")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .is("deleted_at", null); // Only count non-deleted plans
 
     if (countError) {
       console.error("Error counting user plans:", countError);

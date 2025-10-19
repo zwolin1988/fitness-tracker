@@ -15,12 +15,12 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.locator('input[name="email"]');
-    this.passwordInput = page.locator('input[name="password"]');
-    this.submitButton = page.locator('button[type="submit"]');
-    this.errorMessage = page.locator('[data-testid="error-message"]');
+    this.emailInput = page.getByTestId("login-email-input");
+    this.passwordInput = page.getByTestId("login-password-input");
+    this.submitButton = page.getByTestId("login-submit-button");
+    this.errorMessage = page.locator('[role="alert"]'); // Alert component for errors
     this.forgotPasswordLink = page.locator('a[href="/auth/forgot-password"]');
-    this.registerLink = page.locator('a[href="/auth/register"]');
+    this.registerLink = page.getByTestId("login-register-link");
   }
 
   async goto() {

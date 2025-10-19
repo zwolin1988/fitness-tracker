@@ -79,14 +79,16 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
    * Walidacja całego formularza
    */
   const validateForm = (): boolean => {
-    const newErrors: PlanBasicsFormErrors = {
-      name: validateName(formData.name),
-      description: validateDescription(formData.description || ""),
-    };
+    const nameError = validateName(formData.name);
+    const descriptionError = validateDescription(formData.description || "");
+
+    const newErrors: PlanBasicsFormErrors = {};
+    if (nameError) newErrors.name = nameError;
+    if (descriptionError) newErrors.description = descriptionError;
 
     setErrors(newErrors);
 
-    return !newErrors.name && !newErrors.description;
+    return !nameError && !descriptionError;
   };
 
   /**
@@ -165,7 +167,7 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-6 pb-24">
+      <form id="plan-basics-form" onSubmit={handleSubmit} className="space-y-6 pb-24" data-testid="plan-basics-form">
         {/* Nazwa planu */}
         <div className="space-y-2">
           <Label htmlFor="plan-name" className="font-medium text-foreground">
@@ -181,6 +183,7 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
             className={`h-12 ${errors.name && touched.name ? "border-destructive" : ""}`}
             aria-invalid={errors.name && touched.name ? "true" : "false"}
             aria-describedby={errors.name && touched.name ? "name-error" : undefined}
+            data-testid="plan-name-input"
           />
           {errors.name && touched.name && (
             <p id="name-error" className="text-sm text-destructive">
@@ -204,6 +207,7 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
             className={`resize-none ${errors.description && touched.description ? "border-destructive" : ""}`}
             aria-invalid={errors.description && touched.description ? "true" : "false"}
             aria-describedby={errors.description && touched.description ? "description-error" : undefined}
+            data-testid="plan-description-textarea"
           />
           {errors.description && touched.description && (
             <p id="description-error" className="text-sm text-destructive">
@@ -232,6 +236,7 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
                   checked={formData.goal === option.value}
                   onChange={(e) => handleGoalChange(e.target.value)}
                   className="sr-only"
+                  data-testid={`plan-goal-${option.value}`}
                 />
                 {option.label}
               </label>
@@ -243,10 +248,22 @@ export function PlanBasicsForm({ initialData, onSubmit, onCancel }: PlanBasicsFo
       {/* Footer - sticky bottom (jak w kroku 2 i 3) */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-border bg-background py-4">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 sm:px-6">
-          <Button type="button" variant="secondary" size="lg" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            onClick={onCancel}
+            data-testid="plan-basics-cancel-button"
+          >
             Anuluj
           </Button>
-          <Button type="submit" variant="default" size="lg" disabled={!!errors.name} onClick={handleSubmit}>
+          <Button
+            type="submit"
+            form="plan-basics-form"
+            variant="default"
+            size="lg"
+            data-testid="plan-basics-next-button"
+          >
             Dalej
           </Button>
         </div>

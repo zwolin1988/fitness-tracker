@@ -197,6 +197,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               className={`h-12 ${errors.email && touched.email ? "border-destructive" : ""}`}
               aria-invalid={errors.email && touched.email ? "true" : "false"}
               aria-describedby={errors.email && touched.email ? "email-error" : undefined}
+              data-testid="login-email-input"
             />
             {errors.email && touched.email && (
               <p id="email-error" className="text-sm text-destructive">
@@ -226,6 +227,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               className={`h-12 ${errors.password && touched.password ? "border-destructive" : ""}`}
               aria-invalid={errors.password && touched.password ? "true" : "false"}
               aria-describedby={errors.password && touched.password ? "password-error" : undefined}
+              data-testid="login-password-input"
             />
             {errors.password && touched.password && (
               <p id="password-error" className="text-sm text-destructive">
@@ -235,7 +237,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
           </div>
 
           {/* Przycisk submit */}
-          <Button type="submit" className="w-full h-12" disabled={isLoading}>
+          <Button type="submit" className="w-full h-12" disabled={isLoading} data-testid="login-submit-button">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -249,7 +251,11 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
           {/* Link do rejestracji */}
           <div className="text-center text-sm text-muted-foreground">
             Nie masz konta?{" "}
-            <a href="/auth/register" className="text-primary hover:underline font-medium">
+            <a
+              href="/auth/register"
+              className="text-primary hover:underline font-medium"
+              data-testid="login-register-link"
+            >
               Zarejestruj się
             </a>
           </div>
