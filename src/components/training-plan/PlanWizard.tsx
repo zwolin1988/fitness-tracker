@@ -48,6 +48,21 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
   const { submitPlan, isSubmitting, error: submitError } = usePlanSubmit();
 
   /**
+   * Synchronizacja URL z aktualnym krokiem wizarda
+   */
+  useEffect(() => {
+    // Aktualizuj URL tylko jeśli krok się zmienił
+    const currentUrl = new URL(window.location.href);
+    const currentStepInUrl = currentUrl.searchParams.get("step");
+    const expectedStep = state.currentStep.toString();
+
+    if (currentStepInUrl !== expectedStep) {
+      currentUrl.searchParams.set("step", expectedStep);
+      window.history.replaceState({}, "", currentUrl.toString());
+    }
+  }, [state.currentStep]);
+
+  /**
    * Ładowanie danych planu w trybie edycji
    */
   useEffect(() => {
@@ -401,11 +416,18 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
       {state.currentStep !== 1 && (
         <footer className="sticky bottom-0 mt-auto border-t border-border bg-background py-4">
           <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <Button type="button" variant="secondary" size="lg" onClick={prevStep}>
+            <Button type="button" variant="secondary" size="lg" onClick={prevStep} data-testid="wizard-back-button">
               Wstecz
             </Button>
             {state.currentStep === 2 && (
-              <Button type="button" variant="default" size="lg" onClick={nextStep} disabled={!canProceedToNextStep()}>
+              <Button
+                type="button"
+                variant="default"
+                size="lg"
+                onClick={nextStep}
+                disabled={!canProceedToNextStep()}
+                data-testid="wizard-next-button"
+              >
                 Dalej
               </Button>
             )}
@@ -416,6 +438,7 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
                 size="lg"
                 onClick={handleSavePlan}
                 disabled={!isStepValid(3) || isSubmitting}
+                data-testid="wizard-save-button"
               >
                 {isSubmitting ? (
                   <>

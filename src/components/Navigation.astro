@@ -3,43 +3,16 @@
 // Shows different UI based on user session state
 
 import { UserDropdown } from "@/components/auth/UserDropdown";
+import { getNavigationState, getNavigationClass } from "@/lib/navigation";
 
-// Get current user from Supabase session
-let user = null;
-let profile = null;
-let isAdmin = false;
+// Get navigation state (user, profile, admin status)
+const { user, profile, isAdmin, isLoggedIn } = await getNavigationState(Astro.locals.supabase);
 
-try {
-  const supabase = Astro.locals.supabase;
-  if (supabase) {
-    const {
-      data: { user: currentUser },
-    } = await supabase.auth.getUser();
-    user = currentUser;
-
-    // Get user profile to check admin role
-    if (user) {
-      const { data: userProfile } = await supabase
-        .from("profiles")
-        .select("name, role")
-        .eq("user_id", user.id)
-        .single();
-
-      profile = userProfile;
-      isAdmin = userProfile?.role === "admin";
-    }
-  }
-} catch (error) {
-  // Silent fail - user will be treated as not logged in
-  console.error("Error getting user session:", error);
-}
-
-const isLoggedIn = !!user;
+// Generate navigation classes based on admin status
+const navClass = getNavigationClass(isAdmin);
 ---
 
-<nav
-  class={`border-b border-border sticky top-0 z-50 ${isAdmin ? "bg-gradient-to-r from-primary/10 to-primary/5" : "bg-background"}`}
->
+<nav class={navClass}>
   <div class="container mx-auto px-4 sm:px-6">
     <div class="flex h-16 items-center justify-between">
       <div class="flex items-center gap-6">
@@ -73,6 +46,7 @@ const isLoggedIn = !!user;
               </a>
               <a
                 href="/plans"
+                data-testid="nav-plans-link"
                 class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
               >
                 Plany treningowe
@@ -162,24 +136,29 @@ const isLoggedIn = !!user;
           <div class="flex flex-col gap-1">
             <a
               href="/dashboard"
+              data-mobile-link
               class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               Dashboard
             </a>
             <a
               href="/plans"
+              data-mobile-link
+              data-testid="nav-plans-link-mobile"
               class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               Plany treningowe
             </a>
             <a
               href="/workouts"
+              data-mobile-link
               class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               Treningi
             </a>
             <a
               href="/profile"
+              data-mobile-link
               class="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >
               Profil
@@ -191,12 +170,14 @@ const isLoggedIn = !!user;
                 <div class="px-3 py-1 text-xs font-semibold text-primary uppercase">Panel administracyjny</div>
                 <a
                   href="/admin/categories"
+                  data-mobile-link
                   class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                 >
                   Kategorie
                 </a>
                 <a
                   href="/admin/exercises"
+                  data-mobile-link
                   class="px-3 py-2 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                 >
                   Ćwiczenia
@@ -211,11 +192,5 @@ const isLoggedIn = !!user;
 </nav>
 
 <script>
-  // Mobile menu toggle
-  const menuButton = document.getElementById("menu-button");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  menuButton?.addEventListener("click", () => {
-    mobileMenu?.classList.toggle("hidden");
-  });
+  import { setupMobileMenu } from "@/lib/mobile-menu"; // Setup mobile menu with enhanced accessibility setupMobileMenu();
 </script>

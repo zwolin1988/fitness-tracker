@@ -2,19 +2,14 @@
 // Główny komponent konfiguracji serii dla wybranych ćwiczeń (krok 3)
 
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useEffect, useState } from "react";
+
+import { useConfigSync, useExerciseSetConfigurator } from "@/hooks/useExerciseSetConfigurator";
 
 import { ExerciseSetConfigAccordion } from "./ExerciseSetConfigAccordion";
-import type { ExerciseSetConfig, ExerciseSetConfiguratorProps, ExerciseWithSets, SetFormData } from "./types";
+import type { ExerciseSetConfiguratorProps, ExerciseWithSets, SetFormData } from "./types";
 
 /**
  * Sortable wrapper dla pojedynczego ćwiczenia
@@ -59,6 +54,7 @@ function SortableExerciseItem({
 
 /**
  * Główny komponent konfiguracji serii dla wybranych ćwiczeń
+ * Refactored to use useExerciseSetConfigurator hook for better testability
  */
 export function ExerciseSetConfigurator({
   exercises,
@@ -66,25 +62,19 @@ export function ExerciseSetConfigurator({
   onSetsConfigured,
   onExerciseRemoved,
 }: ExerciseSetConfiguratorProps) {
-  // Inicjalizacja stanu z exercisesWithSets
-  const [exercisesWithSets, setExercisesWithSets] = useState<ExerciseWithSets[]>(() => {
-    return exercises.map((exercise, index) => {
-      const existingSets = initialSets?.get(exercise.id);
-      // Jeśli nie ma żadnych serii, dodaj jedną serię z domyślnymi wartościami
-      const sets =
-        existingSets && existingSets.length > 0 ? existingSets : [{ repetitions: 1, weight: 2.5, set_order: 0 }];
+  // Use custom hook for state management and business logic
+  const {
+    exercisesWithSets,
+    expandedExerciseId,
+    config,
+    handleDragEnd,
+    handleToggle,
+    handleSetsChange,
+    handleRemoveExercise,
+  } = useExerciseSetConfigurator(exercises, initialSets, onExerciseRemoved);
 
-      return {
-        exercise,
-        sets,
-        order: index,
-      };
-    });
-  });
-
-  const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(
-    exercisesWithSets.length > 0 ? exercisesWithSets[0].exercise.id : null
-  );
+  // Sync configuration with parent component (prevents infinite loop)
+  useConfigSync(config, onSetsConfigured);
 
   // Sensors dla drag & drop
   const sensors = useSensors(
@@ -98,84 +88,12 @@ export function ExerciseSetConfigurator({
     })
   );
 
-  /**
-   * Obsługa zakończenia drag & drop
-   */
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setExercisesWithSets((items) => {
-        const oldIndex = items.findIndex((item) => item.exercise.id === active.id);
-        const newIndex = items.findIndex((item) => item.exercise.id === over.id);
-
-        const reordered = arrayMove(items, oldIndex, newIndex);
-
-        // Aktualizuj order
-        return reordered.map((item, index) => ({
-          ...item,
-          order: index,
-        }));
-      });
-    }
-  };
-
-  /**
-   * Obsługa toggle accordion
-   */
-  const handleToggle = (exerciseId: string) => {
-    setExpandedExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
-  };
-
-  /**
-   * Obsługa zmiany setów dla ćwiczenia
-   */
-  const handleSetsChange = (exerciseId: string, sets: SetFormData[]) => {
-    setExercisesWithSets((prev) => prev.map((item) => (item.exercise.id === exerciseId ? { ...item, sets } : item)));
-  };
-
-  /**
-   * Obsługa usunięcia ćwiczenia
-   */
-  const handleRemoveExercise = (exerciseId: string) => {
-    setExercisesWithSets((prev) => {
-      const filtered = prev.filter((item) => item.exercise.id !== exerciseId);
-      // Zaktualizuj order po usunięciu
-      return filtered.map((item, index) => ({
-        ...item,
-        order: index,
-      }));
-    });
-
-    // Jeśli usunięte ćwiczenie było rozwinięte, rozwiń pierwsze pozostałe
-    if (expandedExerciseId === exerciseId) {
-      setExpandedExerciseId((prev) => {
-        const remaining = exercisesWithSets.filter((item) => item.exercise.id !== exerciseId);
-        return remaining.length > 0 ? remaining[0].exercise.id : null;
-      });
-    }
-
-    // Wywołaj callback, aby poinformować wizarda o usunięciu (synchronizacja z krokiem 2)
-    onExerciseRemoved?.(exerciseId);
-  };
-
-  /**
-   * Wywołaj onSetsConfigured przy każdej zmianie
-   */
-  useEffect(() => {
-    const config: ExerciseSetConfig[] = exercisesWithSets.map((item) => ({
-      exerciseId: item.exercise.id,
-      sets: item.sets,
-    }));
-    onSetsConfigured(config);
-  }, [exercisesWithSets, onSetsConfigured]);
-
   return (
     <div className="space-y-3">
       {/* Lista ćwiczeń - sortable */}
       {exercisesWithSets.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-neutral-600 dark:text-neutral-400">No exercises selected</p>
+          <p className="text-neutral-600 dark:text-neutral-400">Nie wybrano żadnych ćwiczeń</p>
         </div>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

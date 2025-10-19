@@ -215,6 +215,7 @@ export function ExerciseCatalog({
               value={filters.searchQuery}
               onChange={handleSearchChange}
               className="h-12 w-full pl-10 pr-4 bg-card/50"
+              data-testid="exercise-search-input"
             />
           </div>
 
@@ -266,7 +267,10 @@ export function ExerciseCatalog({
 
       {/* Selection Banner - Before grid */}
       {selectedCount > 0 && (
-        <div className="rounded-lg border border-primary/50 bg-primary/10 p-4 text-center">
+        <div
+          className="rounded-lg border border-primary/50 bg-primary/10 p-4 text-center"
+          data-testid="selected-count-banner"
+        >
           <p className="font-semibold text-primary">
             Wybrano {selectedCount} {selectedCount === 1 ? "ćwiczenie" : selectedCount < 5 ? "ćwiczenia" : "ćwiczeń"}
           </p>
@@ -302,6 +306,7 @@ export function ExerciseCatalog({
                       handleExerciseClick(exercise.id);
                     }
                   }}
+                  data-testid={`exercise-card-${exercise.id}`}
                 >
                   <div className="flex items-start gap-4">
                     {/* Icon */}
