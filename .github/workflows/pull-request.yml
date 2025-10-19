@@ -17,10 +17,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --include=optional
+      - name: Clean install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Run linter
         run: npm run lint
@@ -37,10 +38,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --include=optional
+      - name: Clean install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Run unit tests with coverage
         run: npm run test:coverage
@@ -70,10 +72,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci --include=optional
+      - name: Clean install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Install Playwright browsers
         run: npx playwright install chromium
