@@ -52,11 +52,12 @@ export function RegisterForm({ redirectUrl = "/dashboard" }: RegisterFormProps) 
       if (response.requiresEmailVerification) {
         // Show success message before redirecting to login
         alert(response.message);
-        // eslint-disable-next-line react-compiler/react-compiler
+        // Redirect to login page
+        // eslint-disable-next-line react-compiler/react-compiler -- Navigation is intentional
         window.location.href = "/auth/login";
       } else {
         // Auto-logged in - redirect to target URL
-        // eslint-disable-next-line react-compiler/react-compiler
+
         window.location.href = redirectUrl;
       }
     } catch (error) {

@@ -3,7 +3,7 @@
  * Tests cover auth state management and user profile handling
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   getUserSession,
   getUserProfile,

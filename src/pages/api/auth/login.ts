@@ -108,8 +108,6 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       );
     }
 
-    // Handle unexpected errors
-    console.error("Unexpected error in POST /api/auth/login:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
