@@ -1,10 +1,14 @@
 // src/components/auth/LoginForm.tsx
 // Login form component with Supabase authentication
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { LoginSchema } from "@/lib/schemas/auth";
+import { login } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
+import { LoginSchema, type LoginCredentials } from "@/lib/schemas/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,150 +22,54 @@ interface LoginFormProps {
   redirectUrl?: string;
 }
 
-interface LoginFormErrors {
-  email?: string;
-  password?: string;
-}
-
 /**
  * Formularz logowania
  * Integracja z Supabase Auth przez API endpoint /api/auth/login
  */
 export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [globalError, setGlobalError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Walidacja pola email
-   */
-  const validateEmail = (email: string): string | undefined => {
-    const result = LoginSchema.shape.email.safeParse(email);
-    return result.success ? undefined : result.error.errors[0].message;
-  };
-
-  /**
-   * Walidacja pola hasło
-   */
-  const validatePassword = (password: string): string | undefined => {
-    const result = LoginSchema.shape.password.safeParse(password);
-    return result.success ? undefined : result.error.errors[0].message;
-  };
-
-  /**
-   * Walidacja całego formularza
-   */
-  const validateForm = (): boolean => {
-    const newErrors: LoginFormErrors = {
-      email: validateEmail(email),
-      password: validatePassword(password),
-    };
-
-    setErrors(newErrors);
-    return !newErrors.email && !newErrors.password;
-  };
-
-  /**
-   * Obsługa zmiany email
-   */
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
-    setGlobalError("");
-
-    if (touched.email) {
-      setErrors((prev) => ({
-        ...prev,
-        email: validateEmail(newEmail),
-      }));
-    }
-  };
-
-  /**
-   * Obsługa zmiany hasła
-   */
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    setGlobalError("");
-
-    if (touched.password) {
-      setErrors((prev) => ({
-        ...prev,
-        password: validatePassword(newPassword),
-      }));
-    }
-  };
-
-  /**
-   * Obsługa blur (oznaczenie pola jako dotknięte)
-   */
-  const handleBlur = (field: string) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-
-    if (field === "email") {
-      setErrors((prev) => ({
-        ...prev,
-        email: validateEmail(email),
-      }));
-    } else if (field === "password") {
-      setErrors((prev) => ({
-        ...prev,
-        password: validatePassword(password),
-      }));
-    }
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, touchedFields, isSubmitting },
+    setError,
+  } = useForm<LoginCredentials>({
+    resolver: zodResolver(LoginSchema),
+    mode: "onTouched",
+  });
 
   /**
    * Obsługa submit formularza
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LoginCredentials) => {
     setGlobalError("");
-    setTouched({ email: true, password: true });
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
+      await login(data);
+      // Success - redirect to target URL
+      // eslint-disable-next-line react-compiler/react-compiler
+      window.location.href = redirectUrl;
+    } catch (error) {
+      if (error instanceof ApiError) {
         // Handle validation errors (422)
-        if (response.status === 422 && data.details) {
-          const fieldErrors: LoginFormErrors = {};
-          if (data.details.email) fieldErrors.email = data.details.email[0];
-          if (data.details.password) fieldErrors.password = data.details.password[0];
-          setErrors(fieldErrors);
-          setIsLoading(false);
+        if (error.isValidationError() && error.fieldErrors) {
+          // Set field-specific errors
+          Object.entries(error.fieldErrors).forEach(([field, messages]) => {
+            setError(field as keyof LoginCredentials, {
+              type: "server",
+              message: messages[0],
+            });
+          });
           return;
         }
 
-        // Handle other errors (401, 400, 500)
-        setGlobalError(data.error || "Wystąpił błąd podczas logowania");
-        setIsLoading(false);
-        return;
+        // Handle other API errors
+        setGlobalError(error.message);
+      } else {
+        // Handle unexpected errors
+        setGlobalError("Wystąpił nieoczekiwany błąd. Sprawdź połączenie z internetem i spróbuj ponownie.");
       }
-
-      // Success - redirect to target URL
-      window.location.href = redirectUrl;
-    } catch {
-      setGlobalError("Wystąpił nieoczekiwany błąd. Sprawdź połączenie z internetem i spróbuj ponownie.");
-      setIsLoading(false);
     }
   };
 
@@ -172,7 +80,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
         <CardDescription>Zaloguj się do swojego konta Fitness Tracker</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Globalny błąd */}
           {globalError && (
             <Alert variant="destructive">
@@ -190,18 +98,16 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               id="email"
               type="email"
               placeholder="twoj@email.com"
-              value={email}
-              onChange={handleEmailChange}
-              onBlur={() => handleBlur("email")}
-              disabled={isLoading}
-              className={`h-12 ${errors.email && touched.email ? "border-destructive" : ""}`}
-              aria-invalid={errors.email && touched.email ? "true" : "false"}
-              aria-describedby={errors.email && touched.email ? "email-error" : undefined}
+              {...register("email")}
+              disabled={isSubmitting}
+              className={`h-12 ${errors.email && touchedFields.email ? "border-destructive" : ""}`}
+              aria-invalid={errors.email && touchedFields.email ? "true" : "false"}
+              aria-describedby={errors.email && touchedFields.email ? "email-error" : undefined}
               data-testid="login-email-input"
             />
-            {errors.email && touched.email && (
+            {errors.email && touchedFields.email && (
               <p id="email-error" className="text-sm text-destructive">
-                {errors.email}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -220,25 +126,23 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               id="password"
               type="password"
               placeholder="••••••••"
-              value={password}
-              onChange={handlePasswordChange}
-              onBlur={() => handleBlur("password")}
-              disabled={isLoading}
-              className={`h-12 ${errors.password && touched.password ? "border-destructive" : ""}`}
-              aria-invalid={errors.password && touched.password ? "true" : "false"}
-              aria-describedby={errors.password && touched.password ? "password-error" : undefined}
+              {...register("password")}
+              disabled={isSubmitting}
+              className={`h-12 ${errors.password && touchedFields.password ? "border-destructive" : ""}`}
+              aria-invalid={errors.password && touchedFields.password ? "true" : "false"}
+              aria-describedby={errors.password && touchedFields.password ? "password-error" : undefined}
               data-testid="login-password-input"
             />
-            {errors.password && touched.password && (
+            {errors.password && touchedFields.password && (
               <p id="password-error" className="text-sm text-destructive">
-                {errors.password}
+                {errors.password.message}
               </p>
             )}
           </div>
 
           {/* Przycisk submit */}
-          <Button type="submit" className="w-full h-12" disabled={isLoading} data-testid="login-submit-button">
-            {isLoading ? (
+          <Button type="submit" className="w-full h-12" disabled={isSubmitting} data-testid="login-submit-button">
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Logowanie...

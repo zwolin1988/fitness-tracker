@@ -32,3 +32,41 @@ export const RegisterSchema = z.object({
 });
 
 export type RegisterCredentials = z.infer<typeof RegisterSchema>;
+
+/**
+ * Schema for registration with password confirmation
+ * Uses .refine() to validate password matching
+ */
+export const RegisterWithConfirmSchema = RegisterSchema.extend({
+  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Hasła nie są identyczne",
+  path: ["confirmPassword"],
+});
+
+export type RegisterWithConfirmCredentials = z.infer<typeof RegisterWithConfirmSchema>;
+
+/**
+ * Schema for password reset
+ * - password: min 6 characters
+ */
+export const ResetPasswordSchema = z
+  .object({
+    password: z.string().min(6, "Hasło musi mieć minimum 6 znaków"),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hasła nie są identyczne",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordCredentials = z.infer<typeof ResetPasswordSchema>;
+
+/**
+ * Schema for forgot password (email only)
+ */
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email("Nieprawidłowy format adresu email").trim(),
+});
+
+export type ForgotPasswordCredentials = z.infer<typeof ForgotPasswordSchema>;

@@ -1,18 +1,19 @@
 // src/components/auth/ForgotPasswordForm.tsx
 // Formularz do resetowania hasła (wysyłka linku e-mail)
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 
+import { forgotPassword } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
+import { ForgotPasswordSchema, type ForgotPasswordCredentials } from "@/lib/schemas/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-// Schema walidacji email
-const EmailSchema = z.string().email("Nieprawidłowy format adresu email").trim();
 
 interface ForgotPasswordFormProps {
   /**
@@ -26,71 +27,56 @@ interface ForgotPasswordFormProps {
  * TODO: Integracja z Supabase zostanie dodana w kolejnym etapie
  */
 export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [touched, setTouched] = useState(false);
   const [globalError, setGlobalError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [successEmail, setSuccessEmail] = useState("");
 
-  /**
-   * Walidacja email
-   */
-  const validateEmail = (email: string): string | undefined => {
-    const result = EmailSchema.safeParse(email);
-    return result.success ? undefined : result.error.errors[0].message;
-  };
-
-  /**
-   * Obsługa zmiany email
-   */
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
-    setGlobalError("");
-
-    if (touched) {
-      setError(validateEmail(newEmail) || "");
-    }
-  };
-
-  /**
-   * Obsługa blur
-   */
-  const handleBlur = () => {
-    setTouched(true);
-    setError(validateEmail(email) || "");
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, touchedFields, isSubmitting },
+    setError,
+    reset,
+  } = useForm<ForgotPasswordCredentials>({
+    resolver: zodResolver(ForgotPasswordSchema),
+    mode: "onTouched",
+  });
 
   /**
    * Obsługa submit
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ForgotPasswordCredentials) => {
     setGlobalError("");
-    setTouched(true);
-
-    const validationError = validateEmail(email);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    setIsLoading(true);
 
     try {
-      // TODO: Integracja z Supabase - będzie dodana w kolejnym etapie
-      // Wywołanie: supabase.auth.resetPasswordForEmail(email)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await forgotPassword(data.email);
 
-      // Sukces - pokaż komunikat
+      // Success - show message
+      setSuccessEmail(data.email);
       setIsSuccess(true);
       if (onSuccess) {
         onSuccess();
       }
-    } catch {
-      setGlobalError("Wystąpił nieoczekiwany błąd. Spróbuj ponownie.");
-      setIsLoading(false);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        // Handle validation errors (422)
+        if (error.isValidationError() && error.fieldErrors) {
+          // Set field-specific errors
+          Object.entries(error.fieldErrors).forEach(([field, messages]) => {
+            setError(field as keyof ForgotPasswordCredentials, {
+              type: "server",
+              message: messages[0],
+            });
+          });
+          return;
+        }
+
+        // Handle other API errors
+        setGlobalError(error.message);
+      } else {
+        // Handle unexpected errors
+        setGlobalError("Wystąpił nieoczekiwany błąd. Spróbuj ponownie.");
+      }
     }
   };
 
@@ -106,8 +92,8 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
           <Alert>
             <CheckCircle2 className="h-4 w-4" />
             <AlertDescription>
-              Jeśli konto z adresem <strong>{email}</strong> istnieje, wysłaliśmy link do resetowania hasła. Sprawdź
-              swoją skrzynkę e-mail i postępuj zgodnie z instrukcjami.
+              Jeśli konto z adresem <strong>{successEmail}</strong> istnieje, wysłaliśmy link do resetowania hasła.
+              Sprawdź swoją skrzynkę e-mail i postępuj zgodnie z instrukcjami.
             </AlertDescription>
           </Alert>
 
@@ -127,9 +113,8 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
               className="w-full h-12"
               onClick={() => {
                 setIsSuccess(false);
-                setEmail("");
-                setTouched(false);
-                setError("");
+                setSuccessEmail("");
+                reset();
               }}
             >
               Wyślij ponownie
@@ -156,7 +141,7 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
         <CardDescription>Wyślemy Ci link do resetowania hasła</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Globalny błąd */}
           {globalError && (
             <Alert variant="destructive">
@@ -174,25 +159,23 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
               id="email"
               type="email"
               placeholder="twoj@email.com"
-              value={email}
-              onChange={handleEmailChange}
-              onBlur={handleBlur}
-              disabled={isLoading}
-              className={`h-12 ${error && touched ? "border-destructive" : ""}`}
-              aria-invalid={error && touched ? "true" : "false"}
-              aria-describedby={error && touched ? "email-error" : undefined}
+              {...register("email")}
+              disabled={isSubmitting}
+              className={`h-12 ${errors.email && touchedFields.email ? "border-destructive" : ""}`}
+              aria-invalid={errors.email && touchedFields.email ? "true" : "false"}
+              aria-describedby={errors.email && touchedFields.email ? "email-error" : undefined}
             />
-            {error && touched && (
+            {errors.email && touchedFields.email && (
               <p id="email-error" className="text-sm text-destructive">
-                {error}
+                {errors.email.message}
               </p>
             )}
             <p className="text-sm text-muted-foreground">Podaj adres e-mail użyty podczas rejestracji</p>
           </div>
 
           {/* Przycisk submit */}
-          <Button type="submit" className="w-full h-12" disabled={isLoading}>
-            {isLoading ? (
+          <Button type="submit" className="w-full h-12" disabled={isSubmitting}>
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Wysyłanie...
