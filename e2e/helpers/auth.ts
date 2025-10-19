@@ -37,7 +37,7 @@ export async function loginAsUser(
 /**
  * Logout helper for E2E tests
  */
-export async function logoutUser(page: Page): Promise<void> {
+export async function logoutUser(_page: Page): Promise<void> {
   // TODO: Implement logout when authentication is ready
   console.log("[E2E Auth Helper] Logout requested - not yet implemented");
 
@@ -50,7 +50,7 @@ export async function logoutUser(page: Page): Promise<void> {
 /**
  * Check if user is authenticated
  */
-export async function isAuthenticated(page: Page): Promise<boolean> {
+export async function isAuthenticated(_page: Page): Promise<boolean> {
   // TODO: Implement authentication check when Supabase is ready
   // For now, return false
   return false;

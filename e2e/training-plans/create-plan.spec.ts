@@ -95,7 +95,7 @@ test.describe("Kompletny flow tworzenia planu treningowego", () => {
 
     // Czekamy na request do API i nawigację
     const responsePromise = page.waitForResponse(
-      (response) => response.url().includes('/api/plans') && response.request().method() === 'POST',
+      (response) => response.url().includes("/api/plans") && response.request().method() === "POST",
       { timeout: 30000 }
     );
 
