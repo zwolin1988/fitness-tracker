@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import type { CategoryDTO, ExerciseDTO } from "@/types";
+import type { CategoryDTO, ExerciseDTO, TrainingPlanDTO } from "@/types";
 
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +28,7 @@ export function PlanWizard({ mode, planId, initialData, initialStep = 1, onSucce
   const [isLoadingExercises, setIsLoadingExercises] = useState(true);
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const [draft, setDraft] = useState<PlanDraft | null>(null);
-  const [loadedInitialData, setLoadedInitialData] = useState<any>(null);
+  const [loadedInitialData, setLoadedInitialData] = useState<TrainingPlanDTO | undefined>(undefined);
   const [isLoadingPlan, setIsLoadingPlan] = useState(mode === "edit" && !initialData);
 
   // Hooki

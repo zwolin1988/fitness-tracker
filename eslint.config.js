@@ -56,11 +56,71 @@ const reactConfig = tseslint.config({
   },
 });
 
+// E2E test configuration
+const e2eConfig = tseslint.config({
+  files: ["e2e/**/*.ts"],
+  rules: {
+    "no-console": "off", // Console is useful in E2E tests for debugging
+    "react-hooks/rules-of-hooks": "off", // Playwright fixtures are not React hooks
+  },
+});
+
+// Test files configuration
+const testConfig = tseslint.config({
+  files: ["**/*.test.ts", "**/*.test.tsx", "src/test/**/*.ts"],
+  rules: {
+    "no-console": "off", // Console is useful in tests for debugging
+    "@typescript-eslint/no-explicit-any": "off", // Allow 'any' in test mocks
+    "@typescript-eslint/no-non-null-assertion": "off", // Allow non-null assertions in tests
+    "@typescript-eslint/no-empty-function": "off", // Allow empty functions in test mocks
+  },
+});
+
+// API endpoints and services configuration
+const apiConfig = tseslint.config({
+  files: ["src/pages/api/**/*.ts", "src/lib/services/**/*.ts", "src/lib/*.ts"],
+  rules: {
+    "no-console": "off", // Console is useful for server-side logging and debugging utilities
+  },
+});
+
+// React components that use browser APIs
+const componentConfig = tseslint.config({
+  files: ["src/components/**/*.tsx"],
+  rules: {
+    "no-console": "warn", // Allow console but warn in components
+  },
+});
+
+// Hooks configuration
+const hooksConfig = tseslint.config({
+  files: ["src/hooks/**/*.ts", "src/hooks/**/*.tsx"],
+  rules: {
+    "no-console": "warn", // Allow console but warn in hooks
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
+  {
+    ignores: [
+      "html/**",
+      "dist/**",
+      ".astro/**",
+      "node_modules/**",
+      "coverage/**",
+      "playwright-report/**",
+      "test-results/**",
+    ],
+  },
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  apiConfig,
+  componentConfig,
+  hooksConfig,
+  e2eConfig,
+  testConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );

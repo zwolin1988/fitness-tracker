@@ -12,7 +12,7 @@ import type { SetFormData, SetFormListProps } from "./types";
  * Lista formularzy serii dla pojedynczego ćwiczenia
  * Format zgodny z designem: lista edytowalna, bez formularza na górze
  */
-export function SetFormList({ exerciseId, sets, onSetsChange }: SetFormListProps) {
+export function SetFormList({ sets, onSetsChange }: SetFormListProps) {
   /**
    * Dodanie nowego seta - kopiuje ostatni set lub dodaje z wartościami domyślnymi
    */
